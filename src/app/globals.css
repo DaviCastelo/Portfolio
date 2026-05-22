@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 2%;
+    --foreground: 210 20% 98%;
+    --card: 0 0% 4%;
+    --card-foreground: 210 20% 98%;
+    --primary: 211 100% 52%;
+    --primary-deep: 221 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 215 16% 65%;
+    --border: 0 0% 100% / 0.08;
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-color: #050505;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl;
+  }
+
+  .glass-hover {
+    @apply transition-colors duration-300 hover:border-white/[0.14] hover:bg-white/[0.04];
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 60px -12px rgba(10, 132, 255, 0.35);
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-[#0A84FF] to-[#0057FF] bg-clip-text text-transparent;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  .section-padding {
+    @apply px-4 py-20 md:px-6 md:py-28 lg:px-8;
+  }
+}
