@@ -115,7 +115,7 @@ export default function AdminPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Erro ao salvar.");
-      toast.success(`${data.saved} projetos salvos no KV.`);
+      toast.success(`${data.saved} projetos salvos no Redis.`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao salvar.");
     } finally {
@@ -177,7 +177,7 @@ export default function AdminPage() {
         <div>
           <h1 className="text-2xl font-semibold">Painel Admin</h1>
           <p className="text-sm text-muted-foreground">
-            {items.length} repositórios · alterações salvas no Vercel KV
+            {items.length} repositórios · alterações salvas no Redis
           </p>
         </div>
         <div className="flex gap-2">
@@ -198,9 +198,8 @@ export default function AdminPage() {
 
       {!kvConfigured && (
         <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
-          Vercel KV não configurado. Conecte o KV ao projeto e defina{" "}
-          <code className="text-xs">KV_REST_API_URL</code> e{" "}
-          <code className="text-xs">KV_REST_API_TOKEN</code> antes de salvar.
+          Redis não configurado. Conecte o Redis na Vercel e defina{" "}
+          <code className="text-xs">KV_REDIS_URL</code> antes de salvar.
         </div>
       )}
 

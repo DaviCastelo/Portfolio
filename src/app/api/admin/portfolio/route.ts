@@ -9,6 +9,7 @@ import {
 import { portfolioConfig } from "@/data/projects-overrides";
 import {
   getPortfolioOverridesFromKv,
+  isRedisConfigured,
   setPortfolioOverridesInKv,
 } from "@/services/portfolio-kv";
 import { fetchUserRepos, getGitHubUsername } from "@/services/github";
@@ -60,13 +61,9 @@ export async function GET() {
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  const kvConfigured = Boolean(
-    process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
-  );
-
   return NextResponse.json({
     items,
-    kvConfigured,
+    kvConfigured: isRedisConfigured(),
     kvCount: (await getPortfolioOverridesFromKv()).length,
   });
 }

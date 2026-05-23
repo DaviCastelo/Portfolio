@@ -37,8 +37,7 @@ Abra [http://localhost:3000](http://localhost:3000).
 | `NEXT_PUBLIC_SITE_URL` | SEO | URL pública do site |
 | `API_SECRET` | Opcional | Protege `GET /api/github/repos` |
 | `ADMIN_PASSWORD` | Admin | Senha do painel em `/admin` |
-| `KV_REST_API_URL` | Admin | Injetado ao conectar Vercel KV |
-| `KV_REST_API_TOKEN` | Admin | Injetado ao conectar Vercel KV |
+| `KV_REDIS_URL` | Admin | Injetado ao conectar Redis na Vercel |
 
 ## Links externos (CTAs)
 
@@ -54,16 +53,19 @@ Configurados em [`src/lib/links.ts`](src/lib/links.ts):
 
 Toggle no header (`next-themes`). Tokens em `src/app/globals.css` (`:root` light, `.dark` escuro).
 
-## Painel Admin + Vercel KV
+## Painel Admin + Redis
 
-1. Na Vercel: **Storage → KV** → conectar ao projeto
-2. Defina `ADMIN_PASSWORD` (senha forte) nas variáveis de ambiente
-3. Redeploy
-4. Acesse `https://seu-dominio.vercel.app/admin`
+1. Na Vercel: **Storage → Redis** → conectar ao projeto `dctechnologies`
+2. A Vercel injeta `KV_REDIS_URL` automaticamente
+3. Defina `ADMIN_PASSWORD` (senha forte) nas variáveis de ambiente
+4. Redeploy
+5. Acesse `https://seu-dominio.vercel.app/admin`
 
-No painel você define cada repositório como **Finalizado**, **Em andamento** ou **Oculto**. As alterações são salvas na chave `portfolio:overrides` no KV e refletem no site público (cache GitHub ~60s).
+No painel você define cada repositório como **Finalizado**, **Em andamento** ou **Oculto**. As alterações são salvas na chave `portfolio:overrides` no Redis e refletem no site público (cache GitHub ~60s).
 
-Fallback local: [`src/data/projects-overrides.ts`](src/data/projects-overrides.ts) — o KV tem prioridade sobre o arquivo.
+Local: copie `KV_REDIS_URL` do Redis Cloud (Connect → Javascript node-redis) para `.env.local`.
+
+Fallback: [`src/data/projects-overrides.ts`](src/data/projects-overrides.ts) — o Redis tem prioridade sobre o arquivo.
 
 ## Portfólio híbrido
 
