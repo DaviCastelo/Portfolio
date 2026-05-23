@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from "next/cache";
 import { portfolioConfig } from "@/data/projects-overrides";
 import { getEffectiveOverrides } from "@/lib/portfolio-admin-merge";
 import {
@@ -30,8 +31,20 @@ function inferCategory(
   return days > 90 ? "finished" : "in_progress";
 }
 
-function inferStatus(override?: ProjectOverride): ProjectStatus {
-  return override?.status ?? "finished";
+function inferStatus(
+  override: ProjectOverride | undefined,
+  category: ProjectCategory
+): ProjectStatus {
+  if (override?.status) return override.status;
+  return category === "in_progress" ? "in_progress" : "finished";
+}
+
+function repoThumbnail(
+  repoFullName: string,
+  override?: ProjectOverride
+): string {
+  if (override?.thumbnail) return override.thumbnail;
+  return `https://opengraph.githubassets.com/1/${repoFullName}`;
 }
 
 function sortProjects(
@@ -66,6 +79,8 @@ async function enrichRepo(
         ? [repo.language]
         : []);
 
+  const category = inferCategory(override, repo.updated_at);
+
   return {
     id: repo.full_name,
     title: repo.name.replace(/-/g, " "),
@@ -78,9 +93,9 @@ async function enrichRepo(
     updatedAt: repo.updated_at,
     readmeExcerpt,
     githubUrl: repo.html_url,
-    thumbnail: override?.thumbnail ?? portfolioConfig.defaultThumbnail,
-    status: inferStatus(override),
-    category: inferCategory(override, repo.updated_at),
+    thumbnail: repoThumbnail(repo.full_name, override),
+    status: inferStatus(override, category),
+    category,
     demoUrl: override?.demoUrl,
     featured: override?.featured ?? false,
     stack,
@@ -92,6 +107,7 @@ async function enrichRepo(
 }
 
 export async function getMergedProjects(): Promise<MergedProject[]> {
+  noStore();
   const username = getGitHubUsername();
   if (!username) return [];
 

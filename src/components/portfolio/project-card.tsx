@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ExternalLink, Github, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { portfolioConfig } from "@/data/projects-overrides";
 import type { MergedProject } from "@/types/project";
 import { useTilt } from "@/hooks/use-tilt";
 
@@ -13,15 +15,16 @@ interface ProjectCardProps {
   onOpen: (project: MergedProject) => void;
 }
 
-const statusLabels = {
+const categoryLabels = {
   finished: "Finalizado",
   in_progress: "Em andamento",
-  archived: "Arquivado",
 };
 
 export function ProjectCard({ project, onOpen }: ProjectCardProps) {
   const { ref, onMove, onLeave } = useTilt(5);
   const mainLang = project.stack[0] ?? Object.keys(project.languages)[0];
+  const [thumbSrc, setThumbSrc] = useState(project.thumbnail);
+  const fallbackThumb = portfolioConfig.defaultThumbnail;
 
   return (
     <motion.article
@@ -43,12 +46,15 @@ export function ProjectCard({ project, onOpen }: ProjectCardProps) {
       >
         <div className="relative aspect-video overflow-hidden bg-muted/30">
           <Image
-            src={project.thumbnail}
+            src={thumbSrc}
             alt={project.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 33vw"
             loading="lazy"
+            onError={() => {
+              if (thumbSrc !== fallbackThumb) setThumbSrc(fallbackThumb);
+            }}
           />
           {project.featured && (
             <Badge className="absolute left-3 top-3">Destaque</Badge>
@@ -56,7 +62,9 @@ export function ProjectCard({ project, onOpen }: ProjectCardProps) {
         </div>
         <div className="space-y-3 p-5">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">{statusLabels[project.status]}</Badge>
+            <Badge variant="secondary">
+              {categoryLabels[project.category]}
+            </Badge>
             {mainLang && <Badge variant="outline">{mainLang}</Badge>}
             <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
               <Star className="h-3 w-3" />

@@ -97,8 +97,8 @@ export async function POST(request: Request) {
 
     await setPortfolioOverridesInKv(toSave);
 
+    revalidatePath("/", "layout");
     revalidatePath("/");
-    revalidatePath("/#portfolio");
 
     return NextResponse.json({
       success: true,

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, Github } from "lucide-react";
@@ -12,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { portfolioConfig } from "@/data/projects-overrides";
 import type { MergedProject } from "@/types/project";
 
 interface ProjectModalProps {
@@ -21,6 +23,13 @@ interface ProjectModalProps {
 }
 
 export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps) {
+  const [thumbSrc, setThumbSrc] = useState(project?.thumbnail ?? "");
+  const fallbackThumb = portfolioConfig.defaultThumbnail;
+
+  useEffect(() => {
+    if (project) setThumbSrc(project.thumbnail);
+  }, [project]);
+
   if (!project) return null;
 
   return (
@@ -32,11 +41,14 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
         <div className="space-y-6">
           <div className="relative aspect-video overflow-hidden rounded-lg bg-muted/30">
             <Image
-              src={project.thumbnail}
+              src={thumbSrc}
               alt={project.title}
               fill
               className="object-cover"
               sizes="600px"
+              onError={() => {
+                if (thumbSrc !== fallbackThumb) setThumbSrc(fallbackThumb);
+              }}
             />
           </div>
           <p className="text-muted-foreground">{project.description}</p>
