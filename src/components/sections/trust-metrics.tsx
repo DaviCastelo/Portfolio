@@ -6,7 +6,7 @@ import { Reveal } from "@/components/motion/reveal";
 
 export function TrustMetrics() {
   return (
-    <section className="border-y border-white/[0.08] bg-white/[0.01]">
+    <section className="border-y border-border bg-muted/40">
       <div className="mx-auto max-w-6xl px-4 py-12 md:px-6 lg:px-8">
         <StaggerChildren className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {trustMetrics.map((metric) => (

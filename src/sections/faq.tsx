@@ -14,7 +14,7 @@ export function FaqSection() {
   const meta = sectionMeta.faq;
 
   return (
-    <section id="faq" className="section-padding bg-white/[0.01]">
+    <section id="faq" className="section-padding bg-muted/30">
       <div className="mx-auto max-w-3xl">
         <SectionHeader
           index={meta.index}

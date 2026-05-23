@@ -22,8 +22,8 @@ export function TechnologiesSection() {
         />
       </div>
       <div className="relative mt-8">
-        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-[#050505] to-transparent" />
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-[#050505] to-transparent" />
+        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-background to-transparent" />
+        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-background to-transparent" />
         <div
           className={cn(
             "flex gap-8 whitespace-nowrap",
@@ -33,7 +33,7 @@ export function TechnologiesSection() {
           {items.map((tech, i) => (
             <span
               key={`${tech}-${i}`}
-              className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.02] px-6 py-3 font-mono text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
+              className="inline-flex items-center rounded-full border border-border bg-card px-6 py-3 font-mono text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
             >
               {tech}
             </span>

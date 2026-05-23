@@ -30,7 +30,7 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
           <DialogTitle className="capitalize text-2xl">{project.title}</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          <div className="relative aspect-video overflow-hidden rounded-lg bg-white/[0.02]">
+          <div className="relative aspect-video overflow-hidden rounded-lg bg-muted/30">
             <Image
               src={project.thumbnail}
               alt={project.title}

@@ -1,7 +1,7 @@
 import type { GitHubRepo } from "@/types/project";
 
 const GITHUB_API = "https://api.github.com";
-const REVALIDATE = 3600;
+const REVALIDATE = 60;
 
 function headers(): HeadersInit {
   const token = process.env.GITHUB_TOKEN;

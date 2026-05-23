@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { BrandIcon } from "@/components/brand/brand-icon";
 import { Button } from "@/components/ui/button";
+import { SmartLink } from "@/components/ui/external-link";
 import { cta } from "@/data/site";
 
 export function CtaSection() {
@@ -20,7 +20,7 @@ export function CtaSection() {
   return (
     <section className="section-padding">
       <div className="mx-auto max-w-6xl">
-        <div className="glass relative overflow-hidden rounded-2xl border border-white/[0.08] p-8 md:flex md:items-center md:justify-between md:p-12">
+        <div className="glass relative overflow-hidden rounded-2xl p-8 md:flex md:items-center md:justify-between md:p-12">
           <div className="pointer-events-none absolute -right-8 -top-8 opacity-30">
             <BrandIcon variant="iconSquircleBlue" size="xl" animate="float" />
           </div>
@@ -31,7 +31,9 @@ export function CtaSection() {
             <p className="text-muted-foreground">{cta.description}</p>
           </div>
           <Button asChild size="lg" className="relative mt-6 glow-primary md:mt-0">
-            <Link href={cta.button.href}>{cta.button.label}</Link>
+            <SmartLink href={cta.button.href} external={cta.button.external}>
+              {cta.button.label}
+            </SmartLink>
           </Button>
         </div>
       </div>

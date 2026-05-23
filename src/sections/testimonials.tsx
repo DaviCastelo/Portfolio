@@ -33,7 +33,7 @@ export function TestimonialsSection() {
                       {t.metric}
                     </p>
                   )}
-                  <div className="mt-6 border-t border-white/[0.08] pt-4">
+                  <div className="mt-6 border-t border-border pt-4">
                     <p className="font-medium">{t.author}</p>
                     <p className="text-xs text-muted-foreground">{t.role}</p>
                   </div>

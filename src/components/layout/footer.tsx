@@ -9,8 +9,8 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-white/[0.08] bg-[#050505]">
-      <div className="pointer-events-none absolute right-8 top-8 opacity-[0.04]">
+    <footer className="relative border-t border-border bg-background">
+      <div className="pointer-events-none absolute right-8 top-8 opacity-[0.04] dark:opacity-[0.04]">
         <BrandIcon variant="iconCircleDark" size="lg" animate="none" />
       </div>
       <div className="section-padding mx-auto max-w-6xl">
@@ -32,9 +32,15 @@ export function Footer() {
           </nav>
         </div>
         <Separator className="my-8" />
-        <p className="text-center text-xs text-muted-foreground md:text-left">
-          © {year} DC Technologies. Todos os direitos reservados.
-        </p>
+        <div className="flex flex-col items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-row">
+          <p>© {year} DC Technologies. Todos os direitos reservados.</p>
+          <Link
+            href="/admin"
+            className="transition-colors hover:text-primary"
+          >
+            Painel Admin
+          </Link>
+        </div>
       </div>
     </footer>
   );

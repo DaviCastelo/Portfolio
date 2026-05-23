@@ -1,7 +1,5 @@
-import {
-  portfolioConfig,
-  projectOverrides,
-} from "@/data/projects-overrides";
+import { portfolioConfig } from "@/data/projects-overrides";
+import { getEffectiveOverrides } from "@/lib/portfolio-admin-merge";
 import {
   fetchReadmeExcerpt,
   fetchRepoLanguages,
@@ -16,8 +14,9 @@ import type {
   ProjectStatus,
 } from "@/types/project";
 
-function overrideMap(): Map<string, ProjectOverride> {
-  return new Map(projectOverrides.map((o) => [o.repoFullName, o]));
+async function overrideMap(): Promise<Map<string, ProjectOverride>> {
+  const list = await getEffectiveOverrides();
+  return new Map(list.map((o) => [o.repoFullName, o]));
 }
 
 function inferCategory(
@@ -35,9 +34,13 @@ function inferStatus(override?: ProjectOverride): ProjectStatus {
   return override?.status ?? "finished";
 }
 
-function sortProjects(a: MergedProject, b: MergedProject): number {
-  const pa = projectOverrides.find((o) => o.repoFullName === a.id)?.priority ?? 0;
-  const pb = projectOverrides.find((o) => o.repoFullName === b.id)?.priority ?? 0;
+function sortProjects(
+  a: MergedProject,
+  b: MergedProject,
+  overrides: Map<string, ProjectOverride>
+): number {
+  const pa = overrides.get(a.id)?.priority ?? 0;
+  const pb = overrides.get(b.id)?.priority ?? 0;
   if (pb !== pa) return pb - pa;
   if (a.featured !== b.featured) return a.featured ? -1 : 1;
   if (b.stars !== a.stars) return b.stars - a.stars;
@@ -93,7 +96,7 @@ export async function getMergedProjects(): Promise<MergedProject[]> {
   if (!username) return [];
 
   const repos = await fetchUserRepos(username);
-  const overrides = overrideMap();
+  const overrides = await overrideMap();
 
   const filtered = repos.filter((repo) => {
     const o = overrides.get(repo.full_name);
@@ -106,7 +109,7 @@ export async function getMergedProjects(): Promise<MergedProject[]> {
     filtered.map((repo) => enrichRepo(repo, overrides.get(repo.full_name)))
   );
 
-  return merged.sort(sortProjects);
+  return merged.sort((a, b) => sortProjects(a, b, overrides));
 }
 
 export function filterByCategory(

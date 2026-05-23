@@ -17,7 +17,7 @@ export function ProcessSection() {
           description={meta.description}
         />
         <div className="relative">
-          <div className="absolute left-4 top-0 hidden h-full w-px bg-white/[0.08] md:block" />
+          <div className="absolute left-4 top-0 hidden h-full w-px bg-border md:block" />
           <div className="space-y-8 md:space-y-12">
             {processSteps.map((step, i) => (
               <Reveal key={step.step} delay={i * 0.05}>

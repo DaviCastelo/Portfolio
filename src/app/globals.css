@@ -4,17 +4,46 @@
 
 @layer base {
   :root {
+    --background: 210 20% 98%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --primary: 211 100% 52%;
+    --primary-deep: 221 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 210 15% 94%;
+    --muted-foreground: 215 12% 42%;
+    --border: 220 13% 88%;
+    --radius: 0.75rem;
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 0% / 0.08;
+    --glass-hover-bg: 0 0% 100% / 0.85;
+    --glass-hover-border: 0 0% 0% / 0.12;
+    --grid-line: 0 0% 0% / 0.06;
+    --header-bg: 210 20% 98% / 0.85;
+    --hero-glow: 211 100% 52% / 0.12;
+    --marquee-fade: 210 20% 98%;
+  }
+
+  .dark {
     --background: 0 0% 2%;
     --foreground: 210 20% 98%;
     --card: 0 0% 4%;
     --card-foreground: 210 20% 98%;
     --primary: 211 100% 52%;
-    --primary-deep: 221 100% 50%;
+    --primary-deep: 221 100% 52%;
     --primary-foreground: 0 0% 100%;
     --muted: 0 0% 10%;
     --muted-foreground: 215 16% 65%;
-    --border: 0 0% 100% / 0.08;
-    --radius: 0.75rem;
+    --border: 0 0% 18%;
+    --glass-bg: 0 0% 100% / 0.02;
+    --glass-border: 0 0% 100% / 0.08;
+    --glass-hover-bg: 0 0% 100% / 0.04;
+    --glass-hover-border: 0 0% 100% / 0.14;
+    --grid-line: 0 0% 100% / 0.03;
+    --header-bg: 0 0% 2% / 0.8;
+    --hero-glow: 211 100% 52% / 0.1;
+    --marquee-fade: 0 0% 2%;
   }
 
   * {
@@ -33,17 +62,23 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    background-color: #050505;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl;
+    background-color: hsl(var(--glass-bg));
+    border: 1px solid hsl(var(--glass-border));
+    @apply backdrop-blur-xl;
   }
 
   .glass-hover {
-    @apply transition-colors duration-300 hover:border-white/[0.14] hover:bg-white/[0.04];
+    @apply transition-colors duration-300;
+  }
+
+  .glass-hover:hover {
+    background-color: hsl(var(--glass-hover-bg));
+    border-color: hsl(var(--glass-hover-border));
   }
 
   .glow-primary {
@@ -56,12 +91,17 @@
 
   .grid-bg {
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      linear-gradient(hsl(var(--grid-line)) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--grid-line)) 1px, transparent 1px);
     background-size: 64px 64px;
   }
 
   .section-padding {
     @apply px-4 py-20 md:px-6 md:py-28 lg:px-8;
+  }
+
+  .header-surface {
+    background-color: hsl(var(--header-bg));
+    border-bottom: 1px solid hsl(var(--glass-border));
   }
 }

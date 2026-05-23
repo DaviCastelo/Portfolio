@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import gsap from "gsap";
 import { BrandIcon } from "@/components/brand/brand-icon";
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { HeroProductPreview } from "@/components/hero/product-preview";
 import { HeroBackground } from "@/components/motion/hero-background";
 import { Button } from "@/components/ui/button";
+import { SmartLink } from "@/components/ui/external-link";
 import { hero } from "@/data/site";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
@@ -86,10 +86,20 @@ export function HeroSection() {
           </div>
           <div className="flex flex-wrap gap-4">
             <Button asChild size="lg" className="glow-primary">
-              <Link href={hero.primaryCta.href}>{hero.primaryCta.label}</Link>
+              <SmartLink
+                href={hero.primaryCta.href}
+                external={hero.primaryCta.external}
+              >
+                {hero.primaryCta.label}
+              </SmartLink>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link href={hero.secondaryCta.href}>{hero.secondaryCta.label}</Link>
+              <SmartLink
+                href={hero.secondaryCta.href}
+                external={hero.secondaryCta.external}
+              >
+                {hero.secondaryCta.label}
+              </SmartLink>
             </Button>
           </div>
         </div>

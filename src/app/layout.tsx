@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
-import { Toaster } from "sonner";
 import { Header } from "@/components/layout/header";
+import { WhatsAppFloat } from "@/components/layout/whatsapp-float";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ThemeToaster } from "@/components/providers/theme-toaster";
 import {
   buildMetadata,
   organizationJsonLd,
@@ -30,26 +32,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="dark">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen font-sans antialiased`}
       >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationJsonLd()),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(websiteJsonLd()),
-          }}
-        />
-        <Header />
-        <main>{children}</main>
-        <Toaster theme="dark" position="bottom-right" richColors />
-        <Analytics />
+        <ThemeProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(organizationJsonLd()),
+            }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(websiteJsonLd()),
+            }}
+          />
+          <Header />
+          <main>{children}</main>
+          <WhatsAppFloat />
+          <ThemeToaster />
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );

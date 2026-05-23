@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Plug,
 } from "lucide-react";
+import { CALENDLY_URL, WHATSAPP_URL } from "@/lib/links";
 
 export const navLinks = [
   { href: "#sobre", label: "Sobre" },
@@ -21,8 +22,8 @@ export const hero = {
   highlightWord: "acelera",
   subtitle:
     "Desenvolvemos produtos digitais premium — do MVP ao scale — com engenharia de ponta e design que converte.",
-  primaryCta: { label: "Falar com especialista", href: "#contato" },
-  secondaryCta: { label: "Ver projetos", href: "#portfolio" },
+  primaryCta: { label: "Falar com especialista", href: WHATSAPP_URL, external: true },
+  secondaryCta: { label: "Ver projetos", href: "#portfolio", external: false },
 };
 
 export const trustMetrics = [
@@ -185,7 +186,7 @@ export const cta = {
   highlightWord: "transformar",
   description:
     "Agende uma conversa sem compromisso. Vamos entender seu desafio e propor o caminho mais eficiente.",
-  button: { label: "Iniciar projeto", href: "#contato" },
+  button: { label: "Iniciar projeto", href: CALENDLY_URL, external: true },
 };
 
 export const contact = {

@@ -7,7 +7,7 @@ export function DifferentialsSection() {
   const meta = sectionMeta.differentials;
 
   return (
-    <section id="diferenciais" className="section-padding bg-white/[0.01]">
+    <section id="diferenciais" className="section-padding bg-muted/30">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           index={meta.index}

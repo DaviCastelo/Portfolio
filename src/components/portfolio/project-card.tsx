@@ -41,7 +41,7 @@ export function ProjectCard({ project, onOpen }: ProjectCardProps) {
         onMouseLeave={onLeave}
         className="glass glass-hover overflow-hidden rounded-xl transition-shadow hover:shadow-[0_0_40px_-12px_rgba(10,132,255,0.25)]"
       >
-        <div className="relative aspect-video overflow-hidden bg-white/[0.02]">
+        <div className="relative aspect-video overflow-hidden bg-muted/30">
           <Image
             src={project.thumbnail}
             alt={project.title}

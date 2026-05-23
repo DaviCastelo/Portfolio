@@ -22,7 +22,7 @@ function ServiceCard({
         onMouseLeave={onLeave}
         className="flex h-full flex-col"
       >
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg border border-white/[0.08] bg-primary/10">
+        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-primary/10">
           <Icon className="h-5 w-5 text-primary" />
         </div>
         <h3 className="text-lg font-semibold">{title}</h3>
@@ -36,7 +36,7 @@ export function ServicesSection() {
   const meta = sectionMeta.services;
 
   return (
-    <section id="servicos" className="section-padding bg-white/[0.01]">
+    <section id="servicos" className="section-padding bg-muted/30">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex items-start justify-between gap-4">
           <SectionHeader

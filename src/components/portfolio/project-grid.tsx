@@ -57,7 +57,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
               "rounded-lg border px-4 py-2 text-sm transition-colors",
               filter === tab.key
                 ? "border-primary/50 bg-primary/10 text-primary"
-                : "border-white/[0.08] text-muted-foreground hover:border-white/20"
+                : "border-border text-muted-foreground hover:border-primary/30"
             )}
           >
             {tab.label}

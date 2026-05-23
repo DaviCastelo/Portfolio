@@ -4,16 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { BrandLogo } from "@/components/brand/brand-logo";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { navLinks } from "@/data/site";
+import { externalLinkProps, WHATSAPP_URL } from "@/lib/links";
 import { cn } from "@/lib/utils";
 
 export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-white/[0.08] bg-[#050505]/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6 lg:px-8">
+    <header className="header-surface fixed top-0 z-50 w-full backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 md:px-6 lg:px-8">
         <BrandLogo priority />
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
@@ -26,23 +28,28 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           <Button asChild>
-            <Link href="#contato">Falar conosco</Link>
+            <a href={WHATSAPP_URL} {...externalLinkProps}>
+              Falar conosco
+            </a>
           </Button>
         </div>
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
         <button
           type="button"
-          className="md:hidden"
           onClick={() => setOpen(!open)}
           aria-label={open ? "Fechar menu" : "Abrir menu"}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
+        </div>
       </div>
       <div
         className={cn(
-          "border-t border-white/[0.08] bg-[#050505]/95 backdrop-blur-xl md:hidden",
+          "header-surface border-t backdrop-blur-xl md:hidden",
           open ? "block" : "hidden"
         )}
       >
@@ -58,9 +65,13 @@ export function Header() {
             </Link>
           ))}
           <Button asChild className="w-full">
-            <Link href="#contato" onClick={() => setOpen(false)}>
+            <a
+              href={WHATSAPP_URL}
+              {...externalLinkProps}
+              onClick={() => setOpen(false)}
+            >
               Falar conosco
-            </Link>
+            </a>
           </Button>
         </nav>
       </div>
