@@ -34,7 +34,7 @@ const config: Config = {
       },
       animation: {
         "grid-pulse": "grid-pulse 4s ease-in-out infinite",
-        marquee: "marquee 40s linear infinite",
+        marquee: "marquee 32s linear infinite",
       },
       keyframes: {
         "grid-pulse": {

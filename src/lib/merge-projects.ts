@@ -47,6 +47,21 @@ function repoThumbnail(
   return `https://opengraph.githubassets.com/1/${repoFullName}`;
 }
 
+function buildStack(
+  languages: Record<string, number>,
+  fallbackLanguage?: string | null
+): string[] {
+  const sorted = Object.entries(languages)
+    .sort((a, b) => b[1] - a[1])
+    .map(([lang]) => lang);
+
+  if (fallbackLanguage && !sorted.includes(fallbackLanguage)) {
+    sorted.unshift(fallbackLanguage);
+  }
+
+  return sorted;
+}
+
 function sortProjects(
   a: MergedProject,
   b: MergedProject,
@@ -70,14 +85,8 @@ async function enrichRepo(
     fetchReadmeExcerpt(owner, name),
   ]);
 
-  const langKeys = Object.keys(languages);
   const stack =
-    override?.stack ??
-    (langKeys.length > 0
-      ? langKeys.slice(0, 5)
-      : repo.language
-        ? [repo.language]
-        : []);
+    override?.stack ?? buildStack(languages, repo.language);
 
   const category = inferCategory(override, repo.updated_at);
 

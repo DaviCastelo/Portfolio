@@ -104,4 +104,5 @@
     background-color: hsl(var(--header-bg));
     border-bottom: 1px solid hsl(var(--glass-border));
   }
+
 }

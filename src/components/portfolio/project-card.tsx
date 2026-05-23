@@ -22,7 +22,10 @@ const categoryLabels = {
 
 export function ProjectCard({ project, onOpen }: ProjectCardProps) {
   const { ref, onMove, onLeave } = useTilt(5);
-  const mainLang = project.stack[0] ?? Object.keys(project.languages)[0];
+  const techStack =
+    project.stack.length > 0
+      ? project.stack
+      : Object.keys(project.languages);
   const [thumbSrc, setThumbSrc] = useState(project.thumbnail);
   const fallbackThumb = portfolioConfig.defaultThumbnail;
 
@@ -66,13 +69,25 @@ export function ProjectCard({ project, onOpen }: ProjectCardProps) {
             <Badge variant="secondary">
               {categoryLabels[project.category]}
             </Badge>
-            {mainLang && <Badge variant="outline">{mainLang}</Badge>}
             <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
               <Star className="h-3 w-3" />
               {project.stars}
             </span>
           </div>
           <h3 className="font-semibold capitalize">{project.title}</h3>
+          {techStack.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {techStack.map((tech) => (
+                <Badge
+                  key={tech}
+                  variant="outline"
+                  className="text-xs font-normal"
+                >
+                  {tech}
+                </Badge>
+              ))}
+            </div>
+          )}
           <p className="line-clamp-2 text-sm text-muted-foreground">
             {project.description}
           </p>
