@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { motion } from "framer-motion";
 import { ExternalLink, Github, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -45,12 +45,13 @@ export function ProjectCard({ project, onOpen }: ProjectCardProps) {
         className="glass glass-hover overflow-hidden rounded-xl transition-shadow hover:shadow-[0_0_40px_-12px_rgba(10,132,255,0.25)]"
       >
         <div className="relative aspect-video overflow-hidden bg-muted/30">
-          <Image
+          <OptimizedImage
+            key={thumbSrc}
             src={thumbSrc}
             alt={project.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, 33vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
             loading="lazy"
             onError={() => {
               if (thumbSrc !== fallbackThumb) setThumbSrc(fallbackThumb);

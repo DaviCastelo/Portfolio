@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { motion } from "framer-motion";
 import {
   brandAssets,
@@ -30,7 +30,7 @@ export function BrandIcon({
   const dim = brandIconSizes[size];
 
   const image = (
-    <Image
+    <OptimizedImage
       src={asset.src}
       alt={asset.alt}
       width={dim}

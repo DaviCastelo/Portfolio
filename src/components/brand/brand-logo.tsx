@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import Link from "next/link";
 import { brandAssets } from "@/data/brand-assets";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ export function BrandLogo({ className, priority = false }: BrandLogoProps) {
   const logo = brandAssets.logoTransparent;
   return (
     <Link href="/" className={cn("inline-flex shrink-0", className)}>
-      <Image
+      <OptimizedImage
         src={logo.src}
         alt={logo.alt}
         width={180}

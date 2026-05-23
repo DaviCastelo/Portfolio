@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import Link from "next/link";
 import { ExternalLink, Github } from "lucide-react";
 import {
@@ -40,12 +40,13 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
         </DialogHeader>
         <div className="space-y-6">
           <div className="relative aspect-video overflow-hidden rounded-lg bg-muted/30">
-            <Image
+            <OptimizedImage
+              key={thumbSrc}
               src={thumbSrc}
               alt={project.title}
               fill
               className="object-cover"
-              sizes="600px"
+              sizes="(max-width: 768px) 100vw, 600px"
               onError={() => {
                 if (thumbSrc !== fallbackThumb) setThumbSrc(fallbackThumb);
               }}
@@ -84,7 +85,13 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
             <div className="grid gap-2 sm:grid-cols-2">
               {project.screenshots.map((src, i) => (
                 <div key={i} className="relative aspect-video rounded-lg overflow-hidden">
-                  <Image src={src} alt="" fill className="object-cover" sizes="300px" />
+                  <OptimizedImage
+                    src={src}
+                    alt={`Screenshot ${i + 1} de ${project.title}`}
+                    fill
+                    className="object-cover"
+                    sizes="300px"
+                  />
                 </div>
               ))}
             </div>
