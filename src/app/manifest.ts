@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { faviconAsset } from "@/data/brand-assets";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -12,12 +13,12 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0A84FF",
     icons: [
       {
-        src: "/brand/icon-squircle-dark.png",
+        src: faviconAsset.src,
         sizes: "512x512",
         type: "image/png",
       },
       {
-        src: "/brand/icon-squircle-blue.png",
+        src: faviconAsset.src,
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

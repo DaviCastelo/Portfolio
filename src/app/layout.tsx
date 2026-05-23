@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Orbitron } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { Header } from "@/components/layout/header";
 import { WhatsAppFloat } from "@/components/layout/whatsapp-float";
@@ -24,6 +24,13 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+const orbitron = Orbitron({
+  variable: "--font-brand",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = buildMetadata();
 
 export default function RootLayout({
@@ -34,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen font-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} min-h-screen font-sans antialiased`}
       >
         <ThemeProvider>
           <script

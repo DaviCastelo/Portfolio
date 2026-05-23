@@ -1,9 +1,34 @@
 /** Incremente ao trocar arquivos em public/brand (quebra cache do navegador). */
-const BRAND_V = "2";
+const BRAND_V = "3";
 
 function brandSrc(file: string): string {
   return `/brand/${file}?v=${BRAND_V}`;
 }
+
+function publicSrc(file: string): string {
+  return `/${encodeURI(file)}?v=${BRAND_V}`;
+}
+
+/** Header: escuro = Icone 2, claro = Icone 4 */
+export const headerLogos = {
+  dark: {
+    src: publicSrc("Icone 2.png"),
+    alt: "DC Technologies",
+    width: 48,
+    height: 48,
+  },
+  light: {
+    src: publicSrc("Icone 4.png"),
+    alt: "DC Technologies",
+    width: 48,
+    height: 48,
+  },
+} as const;
+
+export const faviconAsset = {
+  src: publicSrc("Icone 2.png"),
+  alt: "DC Technologies",
+};
 
 export const brandAssets = {
   logoTransparent: {

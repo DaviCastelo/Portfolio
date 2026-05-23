@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { faviconAsset } from "@/data/brand-assets";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
 
 export function buildMetadata(): Metadata {
@@ -39,8 +40,8 @@ export function buildMetadata(): Metadata {
       images: ["/brand/logo.png"],
     },
     icons: {
-      icon: "/brand/icon-squircle-dark.png",
-      apple: "/brand/icon-squircle-dark.png",
+      icon: faviconAsset.src,
+      apple: faviconAsset.src,
     },
     robots: { index: true, follow: true },
   };

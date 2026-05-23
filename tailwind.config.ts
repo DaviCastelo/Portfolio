@@ -31,6 +31,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
+        brand: ["var(--font-brand)", "Orbitron", "system-ui", "sans-serif"],
       },
       animation: {
         "grid-pulse": "grid-pulse 4s ease-in-out infinite",
