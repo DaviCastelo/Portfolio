@@ -1,6 +1,6 @@
 "use client";
 
-import { OptimizedImage } from "@/components/ui/optimized-image";
+import { BrandImage } from "@/components/brand/brand-image";
 import { motion } from "framer-motion";
 import {
   brandAssets,
@@ -30,7 +30,7 @@ export function BrandIcon({
   const dim = brandIconSizes[size];
 
   const image = (
-    <OptimizedImage
+    <BrandImage
       src={asset.src}
       alt={asset.alt}
       width={dim}
