@@ -1,6 +1,6 @@
-# DC Technologies — Landing Page
+# Kairós tecnologias — Landing Page
 
-Landing page premium para DC Technologies, construída com Next.js 15, TypeScript, Tailwind CSS, shadcn/ui, Framer Motion e GSAP.
+Landing page premium para Kairós tecnologias, construída com Next.js 15, TypeScript, Tailwind CSS, shadcn/ui, Framer Motion e GSAP.
 
 Estética inspirada em [Vercel](https://vercel.com/home), [Stripe](https://stripe.com/br) e [Linear](https://linear.app/homepage).
 
@@ -45,8 +45,8 @@ Configurados em [`src/lib/links.ts`](src/lib/links.ts):
 
 | Ação | Destino |
 |------|---------|
-| WhatsApp (flutuante, header, hero) | https://w.app/dctechnologies |
-| Iniciar projeto (CTA) | https://calendly.com/dctechnologiesoficial/30min |
+| WhatsApp (flutuante, header, hero) | https://w.app/kairostech |
+| Iniciar projeto (CTA) | https://calendly.com/kairos-tecsuporte/30min |
 | Contato (menu) | `#contato` — formulário por e-mail |
 
 ## Tema claro / escuro
@@ -55,7 +55,7 @@ Toggle no header (`next-themes`). Tokens em `src/app/globals.css` (`:root` light
 
 ## Painel Admin + Redis
 
-1. Na Vercel: **Storage → Redis** → conectar ao projeto `dctechnologies`
+1. Na Vercel: **Storage → Redis** → conectar ao projeto na Vercel
 2. A Vercel injeta `KV_REDIS_URL` automaticamente
 3. Defina `ADMIN_PASSWORD` (senha forte) nas variáveis de ambiente
 4. Redeploy

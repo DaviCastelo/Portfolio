@@ -8,7 +8,7 @@ export function HeroBackground() {
         className="absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 rounded-full blur-[120px]"
         style={{ background: "hsl(var(--hero-glow))" }}
       />
-      <div className="absolute bottom-0 right-0 h-[300px] w-[400px] rounded-full bg-[#0057FF]/10 blur-[100px] dark:bg-[#0057FF]/10" />
+      <div className="absolute bottom-0 right-0 h-[300px] w-[400px] rounded-full bg-[#D4AF37]/10 blur-[100px] dark:bg-[#D4AF37]/10" />
     </div>
   );
 }

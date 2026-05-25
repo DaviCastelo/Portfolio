@@ -6,20 +6,21 @@ interface BrandWordmarkProps {
 }
 
 /**
- * Tipografia inspirada no logo (Orbitron — similar a Michroma/Exo).
- * "DC" em gradiente azul; restante na cor do tema.
+ * Tipografia inspirada no logo (Orbitron).
+ * "Kairós" em gradiente dourado; "tecnologias" na cor do tema.
  */
 export function BrandWordmark({ className }: BrandWordmarkProps) {
-  const [dc, rest] = SITE_NAME.split(" ");
+  const [first, ...restParts] = SITE_NAME.split(" ");
+  const rest = restParts.join(" ");
 
   return (
     <span
       className={cn(
-        "font-brand text-sm font-semibold uppercase leading-none tracking-[0.14em] md:text-base md:tracking-[0.16em]",
+        "font-brand text-sm font-semibold leading-none tracking-[0.08em] md:text-base md:tracking-[0.1em]",
         className
       )}
     >
-      <span className="gradient-text">{dc}</span>
+      <span className="gradient-text">{first}</span>
       {rest ? (
         <span className="text-foreground">{` ${rest}`}</span>
       ) : null}

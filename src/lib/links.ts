@@ -1,7 +1,7 @@
-export const WHATSAPP_URL = "https://w.app/dctechnologies";
+export const WHATSAPP_URL = "https://w.app/kairostech";
 export const CALENDLY_URL =
-  "https://calendly.com/dctechnologiesoficial/30min";
-export const CONTACT_EMAIL = "contato@dctechnologies.com.br";
+  "https://calendly.com/kairos-tecsuporte/30min";
+export const CONTACT_EMAIL = "kairos.tecsuporte@gmail.com";
 
 export const externalLinkProps = {
   target: "_blank" as const,

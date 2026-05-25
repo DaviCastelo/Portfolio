@@ -6,7 +6,7 @@ import {
   LayoutDashboard,
   Plug,
 } from "lucide-react";
-import { CALENDLY_URL, WHATSAPP_URL } from "@/lib/links";
+import { CALENDLY_URL, CONTACT_EMAIL, WHATSAPP_URL } from "@/lib/links";
 
 export const navLinks = [
   { href: "#sobre", label: "Sobre" },
@@ -39,7 +39,7 @@ export const about = {
   title: "Engenharia com propósito",
   highlightWord: "propósito",
   description:
-    "A DC Technologies une estratégia, design e código para transformar ideias em produtos digitais que geram resultado. Trabalhamos como extensão do seu time — com transparência, velocidade e qualidade de nível enterprise.",
+    "A Kairós tecnologias une estratégia, design e código para transformar ideias em produtos digitais que geram resultado. Trabalhamos como extensão do seu time — com transparência, velocidade e qualidade de nível enterprise.",
   points: [
     "Arquitetura escalável desde o primeiro commit",
     "Design system consistente e acessível",
@@ -185,14 +185,14 @@ export const differentials = [
 export const testimonials = [
   {
     quote:
-      "A DC entregou nosso dashboard em tempo recorde, com qualidade que superou consultorias maiores.",
+      "A Kairós entregou nosso dashboard em tempo recorde, com qualidade que superou consultorias maiores.",
     author: "Ana Ribeiro",
     role: "CTO, Startup de Logística",
     metric: "40% menos tempo operacional",
   },
   {
     quote:
-      "Integração impecável com nosso ERP. O time técnico da DC falou a nossa língua desde o dia um.",
+      "Integração impecável com nosso ERP. O time técnico da Kairós falou a nossa língua desde o dia um.",
     author: "Marcos Silva",
     role: "Diretor de Operações",
     metric: "3 sistemas unificados",
@@ -221,7 +221,7 @@ export const contact = {
   highlightWord: "conversar",
   description:
     "Conte sobre seu projeto. Respondemos em até 24 horas úteis.",
-  email: "contato@dctechnologies.com.br",
+  email: CONTACT_EMAIL,
 };
 
 export const sectionMeta = {
@@ -258,8 +258,8 @@ export const sectionMeta = {
   differentials: {
     index: "07",
     label: "Diferenciais",
-    title: "Por que a DC Technologies",
-    highlightWord: "DC Technologies",
+    title: "Por que a Kairós tecnologias",
+    highlightWord: "Kairós",
     description: "O que nos separa no mercado de desenvolvimento.",
   },
   testimonials: {

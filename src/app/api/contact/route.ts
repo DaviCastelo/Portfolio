@@ -35,8 +35,21 @@ export async function POST(request: Request) {
     const parsed = contactSchema.safeParse(body);
 
     if (!parsed.success) {
+      const flat = parsed.error.flatten();
+      const fieldErrors = flat.fieldErrors;
+      const firstField = Object.entries(fieldErrors).find(
+        ([, msgs]) => msgs && msgs.length > 0
+      );
+      const hint =
+        firstField?.[0] === "message"
+          ? "Mensagem muito longa (máx. 5000 caracteres) ou muito curta."
+          : firstField?.[1]?.[0];
+
       return NextResponse.json(
-        { error: "Dados inválidos", details: parsed.error.flatten() },
+        {
+          error: hint ?? "Dados inválidos. Revise os campos e tente novamente.",
+          details: flat,
+        },
         { status: 400 }
       );
     }
@@ -48,7 +61,7 @@ export async function POST(request: Request) {
     const resend = getResendClient();
     const to = process.env.CONTACT_TO_EMAIL;
     const from =
-      process.env.CONTACT_FROM_EMAIL ?? "contato@dctechnologies.com.br";
+      process.env.CONTACT_FROM_EMAIL ?? "kairos.tecsuporte@gmail.com";
 
     if (!resend || !to) {
       return NextResponse.json(
@@ -66,7 +79,7 @@ export async function POST(request: Request) {
       from,
       to,
       replyTo: email,
-      subject: `[DC Technologies] Contato de ${name}`,
+      subject: `[Kairós tecnologias] Contato de ${name}`,
       html: `
         <h2>Novo contato pelo site</h2>
         <p><strong>Nome:</strong> ${name}</p>

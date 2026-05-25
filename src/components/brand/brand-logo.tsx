@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 interface BrandLogoProps {
   className?: string;
   priority?: boolean;
-  /** Ícone + nome no header (Icone 2/4 + Orbitron) */
+  /** Ícone + nome no header (Icones5 dark / Icones6 light + Orbitron) */
   themeLogos?: boolean;
 }
 
@@ -22,7 +22,7 @@ export function BrandLogo({
       <Link
         href="/"
         className={cn("inline-flex shrink-0 items-center gap-2 md:gap-3", className)}
-        aria-label="DC Technologies — início"
+        aria-label="Kairós tecnologias — início"
       >
         <BrandImage
           src={dark.src}

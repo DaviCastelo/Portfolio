@@ -33,7 +33,7 @@ export function Footer() {
         </div>
         <Separator className="my-8" />
         <div className="flex flex-col items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-row">
-          <p>© {year} DC Technologies. Todos os direitos reservados.</p>
+          <p>© {year} Kairós tecnologias. Todos os direitos reservados.</p>
           <Link
             href="/admin"
             className="transition-colors hover:text-primary"

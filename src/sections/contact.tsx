@@ -14,11 +14,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { contact } from "@/data/site";
 
+const MAX_MESSAGE = 5000;
+
 const schema = z.object({
-  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  email: z.string().email("E-mail inválido"),
+  name: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  email: z.string().trim().email("E-mail inválido"),
   company: z.string().optional(),
-  message: z.string().min(10, "Mensagem deve ter pelo menos 10 caracteres"),
+  message: z
+    .string()
+    .trim()
+    .min(10, "Mensagem deve ter pelo menos 10 caracteres")
+    .max(MAX_MESSAGE, `Mensagem deve ter no máximo ${MAX_MESSAGE} caracteres`),
   website: z.string().max(0).optional(),
 });
 
@@ -44,8 +50,16 @@ export function ContactSection() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Erro ao enviar");
+      const json = (await res.json()) as {
+        error?: string;
+        details?: { fieldErrors?: Record<string, string[]> };
+      };
+      if (!res.ok) {
+        const fieldMsg = json.details?.fieldErrors
+          ? Object.values(json.details.fieldErrors).flat()[0]
+          : undefined;
+        throw new Error(fieldMsg ?? json.error ?? "Erro ao enviar");
+      }
       toast.success("Mensagem enviada! Retornaremos em breve.");
       reset();
     } catch (e) {
@@ -80,7 +94,12 @@ export function ContactSection() {
             </a>
           </div>
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            method="post"
+            noValidate
+            onSubmit={(e) => {
+              e.preventDefault();
+              void handleSubmit(onSubmit)(e);
+            }}
             className="glass space-y-5 rounded-xl p-6 md:p-8"
           >
             <input
@@ -117,7 +136,15 @@ export function ContactSection() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="message">Mensagem</Label>
-              <Textarea id="message" rows={5} {...register("message")} />
+              <Textarea
+                id="message"
+                rows={5}
+                maxLength={MAX_MESSAGE}
+                {...register("message")}
+              />
+              <p className="text-xs text-muted-foreground">
+                Máximo {MAX_MESSAGE} caracteres
+              </p>
               {errors.message && (
                 <p className="text-xs text-red-400">{errors.message.message}</p>
               )}

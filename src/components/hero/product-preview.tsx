@@ -14,7 +14,7 @@ export function HeroProductPreview() {
         <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
         <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
         <span className="ml-2 font-mono text-xs text-muted-foreground">
-          portfolio — DC Technologies
+          portfolio — Kairós tecnologias
         </span>
       </div>
       <div className="grid gap-3 p-4 sm:grid-cols-2">
@@ -41,7 +41,7 @@ export function HeroProductPreview() {
             {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
               <div
                 key={i}
-                className="flex-1 rounded-sm bg-gradient-to-t from-[#0057FF] to-[#0A84FF]"
+                className="flex-1 rounded-sm bg-gradient-to-t from-[#A67C00] to-[#D4AF37]"
                 style={{ height: `${h}%` }}
               />
             ))}

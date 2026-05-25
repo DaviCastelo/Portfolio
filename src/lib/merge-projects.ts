@@ -96,7 +96,7 @@ async function enrichRepo(
     description:
       override?.professionalDescription ??
       repo.description ??
-      "Projeto em desenvolvimento pela DC Technologies.",
+      "Projeto em desenvolvimento pela Kairós tecnologias.",
     stars: repo.stargazers_count,
     languages,
     updatedAt: repo.updated_at,

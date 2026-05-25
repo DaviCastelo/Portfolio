@@ -1,6 +1,6 @@
 export const faqItems = [
   {
-    question: "Quais tipos de projeto a DC Technologies desenvolve?",
+    question: "Quais tipos de projeto a Kairós tecnologias desenvolve?",
     answer:
       "Desenvolvemos sites institucionais, SaaS, APIs, dashboards, automações e integrações entre sistemas — sempre com foco em performance, escalabilidade e experiência premium.",
   },

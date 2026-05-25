@@ -72,7 +72,7 @@ export function HeroSection() {
           <BrandLogo className="lg:hidden" />
           <div className="space-y-6">
             <p className="font-mono text-xs uppercase tracking-widest text-primary">
-              01 — DC Technologies
+              01 — Kairós tecnologias
             </p>
             <h1
               ref={headlineRef}

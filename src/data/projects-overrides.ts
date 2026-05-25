@@ -17,5 +17,5 @@ export const projectOverrides: ProjectOverride[] = [];
 
 export const portfolioConfig = {
   includeForks: false,
-  defaultThumbnail: "/brand/icon-squircle-blue.png?v=2",
+  defaultThumbnail: "/brand/Icones6.png?v=6",
 };

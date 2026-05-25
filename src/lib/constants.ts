@@ -1,4 +1,4 @@
-export const SITE_NAME = "DC Technologies";
+export const SITE_NAME = "Kairós tecnologias";
 export const SITE_TAGLINE =
   "Tecnologia que resolve, resultados que transformam.";
 export const SITE_URL =

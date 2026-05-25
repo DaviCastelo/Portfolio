@@ -1,69 +1,67 @@
 /** Incremente ao trocar arquivos em public/brand (quebra cache do navegador). */
-const BRAND_V = "3";
+const BRAND_V = "6";
+
+const BRAND_ALT = "Kairós tecnologias";
 
 function brandSrc(file: string): string {
   return `/brand/${file}?v=${BRAND_V}`;
 }
 
-function publicSrc(file: string): string {
-  return `/${encodeURI(file)}?v=${BRAND_V}`;
-}
-
-/** Header: escuro = Icone 2, claro = Icone 4 */
+/** Header: escuro = Icones5, claro = Icones6 */
 export const headerLogos = {
   dark: {
-    src: publicSrc("Icone 2.png"),
-    alt: "DC Technologies",
+    src: brandSrc("Icones5.png"),
+    alt: BRAND_ALT,
     width: 48,
     height: 48,
   },
   light: {
-    src: publicSrc("Icone 4.png"),
-    alt: "DC Technologies",
+    src: brandSrc("Icones6.png"),
+    alt: BRAND_ALT,
     width: 48,
     height: 48,
   },
 } as const;
 
 export const faviconAsset = {
-  src: publicSrc("Icone 2.png"),
-  alt: "DC Technologies",
+  src: brandSrc("Icones5.png"),
+  alt: BRAND_ALT,
 };
 
 export const brandAssets = {
   logoTransparent: {
-    src: brandSrc("logo-fundo-t.png"),
-    alt: "DC Technologies — logo",
-    width: 320,
-    height: 120,
+    src: brandSrc("LogoQuadradaPreta.png"),
+    alt: `${BRAND_ALT} — logo`,
+    width: 512,
+    height: 512,
   },
   logoDark: {
-    src: brandSrc("logo.png"),
-    alt: "DC Technologies",
-    width: 320,
-    height: 120,
+    src: brandSrc("LogoQuadradaPreta.png"),
+    alt: BRAND_ALT,
+    width: 512,
+    height: 512,
   },
   iconSquircleDark: {
-    src: brandSrc("icon-squircle-dark.png"),
-    alt: "DC Technologies — ícone",
+    src: brandSrc("Icones6.png"),
+    alt: `${BRAND_ALT} — ícone`,
     width: 512,
     height: 512,
   },
   iconCircleDark: {
-    src: brandSrc("icon-circle-dark.png"),
-    alt: "DC Technologies — emblema escuro",
+    src: brandSrc("Icones5.png"),
+    alt: `${BRAND_ALT} — emblema escuro`,
     width: 512,
     height: 512,
   },
   iconSquircleBlue: {
-    src: brandSrc("icon-squircle-blue.png"),
-    alt: "DC Technologies — ícone azul",
+    src: brandSrc("Icones6.png"),
+    alt: `${BRAND_ALT} — emblema dourado`,
     width: 512,
     height: 512,
   },
   iconCircleLight: {
-    src: brandSrc("icon-circle-light.png"),
-    alt: "DC Technologies — emblema claro",
+    src: brandSrc("Icones4.png"),
+    alt: `${BRAND_ALT} — emblema claro`,
     width: 512,
     height: 512,
   },
