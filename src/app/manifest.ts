@@ -5,7 +5,7 @@ import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: SITE_NAME,
-    short_name: "Kairós",
+    short_name: "Kairos",
     description: SITE_TAGLINE,
     start_url: "/",
     display: "standalone",

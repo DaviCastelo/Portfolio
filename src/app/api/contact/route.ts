@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       from,
       to,
       replyTo: email,
-      subject: `[Kairós tecnologias] Contato de ${name}`,
+      subject: `[Kairos tecnologias] Contato de ${name}`,
       html: `
         <h2>Novo contato pelo site</h2>
         <p><strong>Nome:</strong> ${name}</p>

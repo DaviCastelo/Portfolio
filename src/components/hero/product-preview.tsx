@@ -14,7 +14,7 @@ export function HeroProductPreview() {
         <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
         <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
         <span className="ml-2 font-mono text-xs text-muted-foreground">
-          portfolio — Kairós tecnologias
+          portfolio — Kairos tecnologias
         </span>
       </div>
       <div className="grid gap-3 p-4 sm:grid-cols-2">

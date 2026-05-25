@@ -9,6 +9,7 @@ import { HeroBackground } from "@/components/motion/hero-background";
 import { Button } from "@/components/ui/button";
 import { SmartLink } from "@/components/ui/external-link";
 import { hero } from "@/data/site";
+import { SITE_NAME } from "@/lib/constants";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 export function HeroSection() {
@@ -69,10 +70,17 @@ export function HeroSection() {
       </div>
       <div className="relative mx-auto grid max-w-6xl gap-12 px-4 py-20 md:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 lg:py-28">
         <div className="space-y-8">
-          <BrandLogo className="lg:hidden" />
+          <div className="flex w-full justify-center lg:hidden">
+            <BrandLogo
+              id="hero-mobile-brand"
+              themeLogos
+              variant="hero"
+              priority
+            />
+          </div>
           <div className="space-y-6">
             <p className="font-mono text-xs uppercase tracking-widest text-primary">
-              01 — Kairós tecnologias
+              01 — {SITE_NAME}
             </p>
             <h1
               ref={headlineRef}

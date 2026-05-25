@@ -39,7 +39,7 @@ export const about = {
   title: "Engenharia com propósito",
   highlightWord: "propósito",
   description:
-    "A Kairós tecnologias une estratégia, design e código para transformar ideias em produtos digitais que geram resultado. Trabalhamos como extensão do seu time — com transparência, velocidade e qualidade de nível enterprise.",
+    "A Kairos tecnologias une estratégia, design e código para transformar ideias em produtos digitais que geram resultado. Trabalhamos como extensão do seu time — com transparência, velocidade e qualidade de nível enterprise.",
   points: [
     "Arquitetura escalável desde o primeiro commit",
     "Design system consistente e acessível",
@@ -185,14 +185,14 @@ export const differentials = [
 export const testimonials = [
   {
     quote:
-      "A Kairós entregou nosso dashboard em tempo recorde, com qualidade que superou consultorias maiores.",
+      "A Kairos entregou nosso dashboard em tempo recorde, com qualidade que superou consultorias maiores.",
     author: "Ana Ribeiro",
     role: "CTO, Startup de Logística",
     metric: "40% menos tempo operacional",
   },
   {
     quote:
-      "Integração impecável com nosso ERP. O time técnico da Kairós falou a nossa língua desde o dia um.",
+      "Integração impecável com nosso ERP. O time técnico da Kairos falou a nossa língua desde o dia um.",
     author: "Marcos Silva",
     role: "Diretor de Operações",
     metric: "3 sistemas unificados",
@@ -258,8 +258,8 @@ export const sectionMeta = {
   differentials: {
     index: "07",
     label: "Diferenciais",
-    title: "Por que a Kairós tecnologias",
-    highlightWord: "Kairós",
+    title: "Por que a Kairos tecnologias",
+    highlightWord: "Kairos",
     description: "O que nos separa no mercado de desenvolvimento.",
   },
   testimonials: {

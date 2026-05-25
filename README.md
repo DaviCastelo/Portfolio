@@ -1,6 +1,6 @@
-# Kairós tecnologias — Landing Page
+# Kairos tecnologias — Landing Page
 
-Landing page premium para Kairós tecnologias, construída com Next.js 15, TypeScript, Tailwind CSS, shadcn/ui, Framer Motion e GSAP.
+Landing page premium para Kairos tecnologias, construída com Next.js 15, TypeScript, Tailwind CSS, shadcn/ui, Framer Motion e GSAP.
 
 Estética inspirada em [Vercel](https://vercel.com/home), [Stripe](https://stripe.com/br) e [Linear](https://linear.app/homepage).
 

@@ -7,7 +7,7 @@ interface BrandWordmarkProps {
 
 /**
  * Tipografia inspirada no logo (Orbitron).
- * "Kairós" em gradiente dourado; "tecnologias" na cor do tema.
+ * "Kairos" em gradiente dourado; "tecnologias" na cor do tema.
  */
 export function BrandWordmark({ className }: BrandWordmarkProps) {
   const [first, ...restParts] = SITE_NAME.split(" ");

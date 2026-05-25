@@ -1,7 +1,7 @@
 /** Incremente ao trocar arquivos em public/brand (quebra cache do navegador). */
 const BRAND_V = "6";
 
-const BRAND_ALT = "Kairós tecnologias";
+const BRAND_ALT = "Kairos tecnologias";
 
 function brandSrc(file: string): string {
   return `/brand/${file}?v=${BRAND_V}`;

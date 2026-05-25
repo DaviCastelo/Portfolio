@@ -7,16 +7,26 @@ import { BrandLogo } from "@/components/brand/brand-logo";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { navLinks } from "@/data/site";
+import { useHeroBrandInView } from "@/hooks/use-hero-brand-in-view";
 import { externalLinkProps, WHATSAPP_URL } from "@/lib/links";
 import { cn } from "@/lib/utils";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const heroBrandInView = useHeroBrandInView();
 
   return (
     <header className="header-surface fixed top-0 z-50 w-full backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 md:px-6 lg:px-8">
-        <BrandLogo priority themeLogos />
+        <BrandLogo
+          priority
+          themeLogos
+          className={cn(
+            "transition-[opacity,transform] duration-300 ease-out",
+            heroBrandInView &&
+              "max-lg:pointer-events-none max-lg:translate-x-2 max-lg:opacity-0"
+          )}
+        />
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
             <Link

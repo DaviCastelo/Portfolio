@@ -4,7 +4,7 @@ import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
 
 export function buildMetadata(): Metadata {
   const title = `${SITE_NAME} | Tecnologia que resolve`;
-  const description = `${SITE_TAGLINE} Desenvolvimento web, SaaS, APIs e automações com engenharia premium.`;
+  const description = `${SITE_TAGLINE} Desenvolvimento web, SaaS, APIs e automações com serviço premium.`;
 
   return {
     title: {
@@ -18,8 +18,8 @@ export function buildMetadata(): Metadata {
       "APIs",
       "Next.js",
       "TypeScript",
-      "Kairós tecnologias",
-      "Kairós",
+      "Kairos tecnologias",
+      "Kairos",
       "software house",
       "automação",
     ],
