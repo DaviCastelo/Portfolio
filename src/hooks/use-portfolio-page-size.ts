@@ -9,8 +9,13 @@ export const PORTFOLIO_PAGE_SIZES = {
   desktop: 8,
 } as const;
 
+export type PortfolioPageSize =
+  (typeof PORTFOLIO_PAGE_SIZES)[keyof typeof PORTFOLIO_PAGE_SIZES];
+
 export function usePortfolioPageSize() {
-  const [pageSize, setPageSize] = useState(PORTFOLIO_PAGE_SIZES.mobile);
+  const [pageSize, setPageSize] = useState<PortfolioPageSize>(
+    PORTFOLIO_PAGE_SIZES.mobile
+  );
 
   useEffect(() => {
     const mqLg = globalThis.matchMedia("(min-width: 1024px)");
