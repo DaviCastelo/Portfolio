@@ -7,6 +7,7 @@ import { ExternalLink, Github, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { portfolioConfig } from "@/data/projects-overrides";
+import { markdownToPlainPreview } from "@/components/portfolio/project-markdown";
 import type { MergedProject } from "@/types/project";
 import { useTilt } from "@/hooks/use-tilt";
 
@@ -47,13 +48,13 @@ export function ProjectCard({ project, onOpen }: ProjectCardProps) {
         onMouseLeave={onLeave}
         className="glass glass-hover overflow-hidden rounded-xl transition-shadow hover:shadow-[0_0_40px_-12px_rgba(10,132,255,0.25)]"
       >
-        <div className="relative aspect-video overflow-hidden bg-muted/30">
+        <div className="relative aspect-video overflow-hidden bg-muted/30 p-2">
           <OptimizedImage
             key={thumbSrc}
             src={thumbSrc}
             alt={project.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-contain transition-transform duration-500 group-hover:scale-[1.02]"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
             loading="lazy"
             onError={() => {
@@ -89,7 +90,7 @@ export function ProjectCard({ project, onOpen }: ProjectCardProps) {
             </div>
           )}
           <p className="line-clamp-2 text-sm text-muted-foreground">
-            {project.description}
+            {markdownToPlainPreview(project.description)}
           </p>
           <div className="flex flex-wrap gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
             {project.demoUrl && (

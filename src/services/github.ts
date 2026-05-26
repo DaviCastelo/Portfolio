@@ -61,6 +61,13 @@ export async function fetchReadmeExcerpt(
   }
 }
 
+export async function fetchRepoByFullName(
+  fullName: string
+): Promise<GitHubRepo | null> {
+  const url = `${GITHUB_API}/repos/${fullName}`;
+  return fetchJson<GitHubRepo>(url);
+}
+
 export function getGitHubUsername(): string | undefined {
   return process.env.GITHUB_USERNAME;
 }

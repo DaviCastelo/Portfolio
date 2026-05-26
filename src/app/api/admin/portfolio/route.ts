@@ -1,70 +1,64 @@
-import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { requireAdmin, revalidatePortfolio } from "@/lib/admin-api";
 import {
-  getEffectiveOverrides,
-  overrideFromVisibility,
-  visibilityFromOverride,
-} from "@/lib/portfolio-admin-merge";
+  applyVisibilityToRecord,
+  newGithubRecord,
+} from "@/lib/portfolio-record";
+import {
+  githubRepoToAdminItem,
+  recordToAdminItem,
+} from "@/lib/portfolio-admin-mapper";
+import { getRecordsMap } from "@/lib/portfolio-admin-merge";
 import { portfolioConfig } from "@/data/projects-overrides";
 import {
-  getPortfolioOverridesFromKv,
+  getPortfolioProjectsFromKv,
   isRedisConfigured,
-  setPortfolioOverridesInKv,
+  mergePortfolioProjects,
 } from "@/services/portfolio-kv";
 import { fetchUserRepos, getGitHubUsername } from "@/services/github";
 import type {
-  PortfolioAdminEntry,
   PortfolioAdminRepoItem,
   PortfolioVisibility,
 } from "@/types/portfolio-admin";
-
-async function requireAdmin() {
-  const ok = await isAdminAuthenticated();
-  if (!ok) {
-    return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
-  }
-  return null;
-}
 
 export async function GET() {
   const authError = await requireAdmin();
   if (authError) return authError;
 
   const username = getGitHubUsername();
+  const recordsMap = await getRecordsMap();
+
+  const manualItems: PortfolioAdminRepoItem[] = Array.from(
+    recordsMap.values()
+  )
+    .filter((r) => r.source === "manual")
+    .map((r) => recordToAdminItem(r));
+
   if (!username) {
-    return NextResponse.json(
-      { error: "GITHUB_USERNAME não configurado." },
-      { status: 503 }
-    );
+    return NextResponse.json({
+      items: manualItems,
+      kvConfigured: isRedisConfigured(),
+      kvCount: (await getPortfolioProjectsFromKv()).length,
+    });
   }
 
-  const [repos, effective] = await Promise.all([
-    fetchUserRepos(username),
-    getEffectiveOverrides(),
-  ]);
+  const repos = await fetchUserRepos(username);
 
-  const overrideByRepo = new Map(effective.map((o) => [o.repoFullName, o]));
-
-  const items: PortfolioAdminRepoItem[] = repos
+  const githubItems: PortfolioAdminRepoItem[] = repos
     .filter((repo) => portfolioConfig.includeForks || !repo.fork)
-    .map((repo) => {
-      const o = overrideByRepo.get(repo.full_name);
-      return {
-        repoFullName: repo.full_name,
-        name: repo.name,
-        description: repo.description,
-        stars: repo.stargazers_count,
-        updatedAt: repo.updated_at,
-        visibility: visibilityFromOverride(o, repo.updated_at),
-      };
-    })
+    .map((repo) =>
+      githubRepoToAdminItem(repo, recordsMap.get(repo.full_name))
+    )
     .sort((a, b) => a.name.localeCompare(b.name));
+
+  const items = [...githubItems, ...manualItems].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 
   return NextResponse.json({
     items,
     kvConfigured: isRedisConfigured(),
-    kvCount: (await getPortfolioOverridesFromKv()).length,
+    kvCount: (await getPortfolioProjectsFromKv()).length,
   });
 }
 
@@ -84,25 +78,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const effective = await getEffectiveOverrides();
-    const map = new Map(effective.map((o) => [o.repoFullName, o]));
+    const recordsMap = await getRecordsMap();
+    const updates = body.entries.map((entry) => {
+      const existing =
+        recordsMap.get(entry.repoFullName) ??
+        newGithubRecord(entry.repoFullName);
+      return applyVisibilityToRecord(existing, entry.visibility);
+    });
 
-    const toSave: PortfolioAdminEntry[] = body.entries.map((entry) =>
-      overrideFromVisibility(
-        entry.repoFullName,
-        entry.visibility,
-        map.get(entry.repoFullName)
-      )
-    );
-
-    await setPortfolioOverridesInKv(toSave);
-
-    revalidatePath("/", "layout");
-    revalidatePath("/");
+    await mergePortfolioProjects(updates);
+    revalidatePortfolio();
 
     return NextResponse.json({
       success: true,
-      saved: toSave.length,
+      saved: updates.length,
     });
   } catch (e) {
     const message =

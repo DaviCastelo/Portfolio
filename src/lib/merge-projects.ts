@@ -1,12 +1,17 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { portfolioConfig } from "@/data/projects-overrides";
-import { getEffectiveOverrides } from "@/lib/portfolio-admin-merge";
+import {
+  buildStackFromLanguages,
+  recordDisplayTitle,
+} from "@/lib/portfolio-record";
+import { getEffectiveOverrides, getRecordsMap } from "@/lib/portfolio-admin-merge";
 import {
   fetchReadmeExcerpt,
   fetchRepoLanguages,
   fetchUserRepos,
   getGitHubUsername,
 } from "@/services/github";
+import type { PortfolioProjectRecord } from "@/types/portfolio-admin";
 import type {
   GitHubRepo,
   MergedProject,
@@ -22,9 +27,11 @@ async function overrideMap(): Promise<Map<string, ProjectOverride>> {
 
 function inferCategory(
   override?: ProjectOverride,
+  record?: PortfolioProjectRecord,
   updatedAt?: string
 ): ProjectCategory {
   if (override?.category) return override.category;
+  if (record?.category) return record.category;
   if (!updatedAt) return "in_progress";
   const days =
     (Date.now() - new Date(updatedAt).getTime()) / (1000 * 60 * 60 * 24);
@@ -39,27 +46,15 @@ function inferStatus(
   return category === "in_progress" ? "in_progress" : "finished";
 }
 
-function repoThumbnail(
-  repoFullName: string,
+function projectThumbnail(
+  id: string,
   override?: ProjectOverride
 ): string {
   if (override?.thumbnail) return override.thumbnail;
-  return `https://opengraph.githubassets.com/1/${repoFullName}`;
-}
-
-function buildStack(
-  languages: Record<string, number>,
-  fallbackLanguage?: string | null
-): string[] {
-  const sorted = Object.entries(languages)
-    .sort((a, b) => b[1] - a[1])
-    .map(([lang]) => lang);
-
-  if (fallbackLanguage && !sorted.includes(fallbackLanguage)) {
-    sorted.unshift(fallbackLanguage);
+  if (!id.includes("/")) {
+    return portfolioConfig.defaultThumbnail;
   }
-
-  return sorted;
+  return `https://opengraph.githubassets.com/1/${id}`;
 }
 
 function sortProjects(
@@ -75,65 +70,159 @@ function sortProjects(
   return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
 }
 
+function mergedFromRecord(
+  record: PortfolioProjectRecord,
+  override?: ProjectOverride
+): MergedProject {
+  const id = record.source === "github" ? record.repoFullName ?? record.id : record.id;
+  const languages = record.languages ?? {};
+  const stack =
+    override?.stack ??
+    record.stack ??
+    buildStackFromLanguages(languages, null);
+
+  const updatedAt =
+    record.updatedAt ?? new Date().toISOString();
+
+  const category = inferCategory(override, record, updatedAt);
+
+  const description =
+    override?.professionalDescription ??
+    record.professionalDescription ??
+    record.githubDescription ??
+    "Projeto em desenvolvimento pela Kairos tecnologias.";
+
+  return {
+    id,
+    title: recordDisplayTitle(record),
+    description,
+    stars: record.stars ?? 0,
+    languages,
+    updatedAt,
+    readmeExcerpt: record.readmeExcerpt,
+    githubUrl:
+      record.githubUrl ??
+      (record.source === "github" && record.repoFullName
+        ? `https://github.com/${record.repoFullName}`
+        : "#"),
+    thumbnail: projectThumbnail(id, override),
+    status: inferStatus(override, category),
+    category,
+    demoUrl: override?.demoUrl ?? record.demoUrl,
+    featured: override?.featured ?? record.featured ?? false,
+    stack,
+    architecture: override?.architecture ?? record.architecture,
+    challenges: override?.challenges ?? record.challenges,
+    solutions: override?.solutions ?? record.solutions,
+    screenshots: override?.screenshots ?? record.screenshots ?? [],
+  };
+}
+
 async function enrichRepo(
   repo: GitHubRepo,
+  record: PortfolioProjectRecord | undefined,
   override?: ProjectOverride
 ): Promise<MergedProject> {
   const [owner, name] = repo.full_name.split("/");
-  const [languages, readmeExcerpt] = await Promise.all([
-    fetchRepoLanguages(owner, name),
-    fetchReadmeExcerpt(owner, name),
-  ]);
+
+  const useSnapshot =
+    record?.lastSyncedAt &&
+    record.languages &&
+    record.readmeExcerpt !== undefined;
+
+  let languages: Record<string, number>;
+  let readmeExcerpt: string | undefined;
+
+  if (useSnapshot && record) {
+    languages = record.languages ?? {};
+    readmeExcerpt = record.readmeExcerpt;
+  } else {
+    [languages, readmeExcerpt] = await Promise.all([
+      fetchRepoLanguages(owner, name),
+      fetchReadmeExcerpt(owner, name),
+    ]);
+  }
 
   const stack =
-    override?.stack ?? buildStack(languages, repo.language);
+    override?.stack ??
+    record?.stack ??
+    buildStackFromLanguages(languages, repo.language);
 
-  const category = inferCategory(override, repo.updated_at);
+  const description =
+    override?.professionalDescription ??
+    record?.professionalDescription ??
+    record?.githubDescription ??
+    repo.description ??
+    "Projeto em desenvolvimento pela Kairos tecnologias.";
 
-  return {
-    id: repo.full_name,
-    title: repo.name.replace(/-/g, " "),
-    description:
-      override?.professionalDescription ??
-      repo.description ??
-      "Projeto em desenvolvimento pela Kairos tecnologias.",
-    stars: repo.stargazers_count,
+  const mergedRecord: PortfolioProjectRecord = {
+    ...(record ?? {
+      id: repo.full_name,
+      source: "github",
+      repoFullName: repo.full_name,
+    }),
+    stars: record?.stars ?? repo.stargazers_count,
     languages,
-    updatedAt: repo.updated_at,
     readmeExcerpt,
+    updatedAt: record?.updatedAt ?? repo.updated_at,
+    githubDescription: record?.githubDescription ?? repo.description,
     githubUrl: repo.html_url,
-    thumbnail: repoThumbnail(repo.full_name, override),
-    status: inferStatus(override, category),
-    category,
-    demoUrl: override?.demoUrl,
-    featured: override?.featured ?? false,
+  };
+
+  const base = mergedFromRecord(mergedRecord, override);
+  return {
+    ...base,
+    stars: mergedRecord.stars ?? repo.stargazers_count,
+    languages,
+    readmeExcerpt,
+    updatedAt: mergedRecord.updatedAt ?? repo.updated_at,
+    description,
     stack,
-    architecture: override?.architecture,
-    challenges: override?.challenges,
-    solutions: override?.solutions,
-    screenshots: override?.screenshots ?? [],
+    githubUrl: repo.html_url,
+    thumbnail: projectThumbnail(repo.full_name, override),
   };
 }
 
 export async function getMergedProjects(): Promise<MergedProject[]> {
   noStore();
   const username = getGitHubUsername();
-  if (!username) return [];
-
-  const repos = await fetchUserRepos(username);
+  const recordsMap = await getRecordsMap();
   const overrides = await overrideMap();
 
+  const manualRecords = Array.from(recordsMap.values()).filter(
+    (r) => r.source === "manual" && !r.hidden
+  );
+
+  const manualMerged = manualRecords.map((record) => {
+    const override = overrides.get(record.id);
+    return mergedFromRecord(record, override);
+  });
+
+  if (!username) {
+    return manualMerged.sort((a, b) => sortProjects(a, b, overrides));
+  }
+
+  const repos = await fetchUserRepos(username);
+
   const filtered = repos.filter((repo) => {
+    const record = recordsMap.get(repo.full_name);
     const o = overrides.get(repo.full_name);
-    if (o?.hidden) return false;
+    if (record?.hidden || o?.hidden) return false;
     if (!portfolioConfig.includeForks && repo.fork) return false;
     return true;
   });
 
-  const merged = await Promise.all(
-    filtered.map((repo) => enrichRepo(repo, overrides.get(repo.full_name)))
+  const githubMerged = await Promise.all(
+    filtered.map((repo) =>
+      enrichRepo(
+        repo,
+        recordsMap.get(repo.full_name),
+        overrides.get(repo.full_name)
+      )
+    )
   );
 
+  const merged = [...githubMerged, ...manualMerged];
   return merged.sort((a, b) => sortProjects(a, b, overrides));
 }
 

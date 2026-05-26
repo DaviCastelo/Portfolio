@@ -2,16 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Loader2, LogOut, Save, Search } from "lucide-react";
+import { Loader2, LogOut, Search } from "lucide-react";
 import { toast } from "sonner";
+import { NewProjectDialog } from "@/components/admin/new-project-dialog";
+import { ProjectEditorCard } from "@/components/admin/project-editor-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type {
-  PortfolioAdminRepoItem,
-  PortfolioVisibility,
-} from "@/types/portfolio-admin";
-
-type VisibilityMap = Record<string, PortfolioVisibility>;
+import type { PortfolioAdminRepoItem } from "@/types/portfolio-admin";
 
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
@@ -19,10 +16,8 @@ export default function AdminPage() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   const [items, setItems] = useState<PortfolioAdminRepoItem[]>([]);
-  const [visibility, setVisibility] = useState<VisibilityMap>({});
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [kvConfigured, setKvConfigured] = useState(true);
 
   const loadPortfolio = useCallback(async () => {
@@ -43,11 +38,6 @@ export default function AdminPage() {
       };
       setItems(data.items);
       setKvConfigured(data.kvConfigured);
-      const map: VisibilityMap = {};
-      for (const item of data.items) {
-        map[item.repoFullName] = item.visibility;
-      }
-      setVisibility(map);
       setAuthenticated(true);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao carregar.");
@@ -67,7 +57,8 @@ export default function AdminPage() {
     return items.filter(
       (item) =>
         item.name.toLowerCase().includes(q) ||
-        item.repoFullName.toLowerCase().includes(q)
+        item.repoFullName.toLowerCase().includes(q) ||
+        (item.title?.toLowerCase().includes(q) ?? false)
     );
   }, [items, search]);
 
@@ -101,26 +92,18 @@ export default function AdminPage() {
     toast.success("Sessão encerrada.");
   }
 
-  async function handleSave() {
-    setSaving(true);
-    try {
-      const entries = items.map((item) => ({
-        repoFullName: item.repoFullName,
-        visibility: visibility[item.repoFullName] ?? item.visibility,
-      }));
-      const res = await fetch("/api/admin/portfolio", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entries }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Erro ao salvar.");
-      toast.success(`${data.saved} projetos salvos no Redis.`);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erro ao salvar.");
-    } finally {
-      setSaving(false);
-    }
+  function handleSaved(updated: PortfolioAdminRepoItem) {
+    setItems((prev) => {
+      const idx = prev.findIndex((i) => i.id === updated.id);
+      if (idx < 0) return [...prev, updated];
+      const next = [...prev];
+      next[idx] = updated;
+      return next;
+    });
+  }
+
+  function handleDeleted(id: string) {
+    setItems((prev) => prev.filter((i) => i.id !== id));
   }
 
   if (authenticated === null || (authenticated && loading && !items.length)) {
@@ -136,7 +119,7 @@ export default function AdminPage() {
       <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-16">
         <h1 className="mb-2 text-2xl font-semibold">Painel Admin</h1>
         <p className="mb-8 text-sm text-muted-foreground">
-          Gerencie a visibilidade e o status dos projetos do portfólio.
+          Edite projetos, capas, descrições e sincronize com o GitHub.
         </p>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
@@ -172,34 +155,27 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
+    <main className="mx-auto max-w-3xl px-6 py-10">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Painel Admin</h1>
           <p className="text-sm text-muted-foreground">
-            {items.length} repositórios · alterações salvas no Redis
+            {items.length} projetos · edições no Redis · capas no Vercel Blob
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <NewProjectDialog onCreated={handleSaved} />
           <Button variant="outline" size="sm" onClick={handleLogout}>
             <LogOut className="h-4 w-4" />
             Sair
-          </Button>
-          <Button size="sm" onClick={handleSave} disabled={saving || !kvConfigured}>
-            {saving ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-            Salvar
           </Button>
         </div>
       </div>
 
       {!kvConfigured && (
         <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
-          Redis não configurado. Conecte o Redis na Vercel e defina{" "}
-          <code className="text-xs">KV_REDIS_URL</code> antes de salvar.
+          Redis não configurado. Defina <code className="text-xs">KV_REDIS_URL</code>{" "}
+          para persistir edições em produção.
         </div>
       )}
 
@@ -207,46 +183,26 @@ export default function AdminPage() {
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           className="pl-10"
-          placeholder="Buscar repositório..."
+          placeholder="Buscar projeto..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {filteredItems.map((item) => (
-          <li
-            key={item.repoFullName}
-            className="flex flex-col gap-3 rounded-lg border border-border bg-muted/20 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-medium">{item.name}</p>
-              <p className="truncate text-xs text-muted-foreground">
-                {item.repoFullName}
-                {item.description ? ` · ${item.description}` : ""}
-              </p>
-            </div>
-            <select
-              className="h-10 shrink-0 rounded-lg border border-border bg-background px-3 text-sm"
-              value={visibility[item.repoFullName] ?? item.visibility}
-              onChange={(e) =>
-                setVisibility((prev) => ({
-                  ...prev,
-                  [item.repoFullName]: e.target.value as PortfolioVisibility,
-                }))
-              }
-            >
-              <option value="finished">Finalizado</option>
-              <option value="in_progress">Em andamento</option>
-              <option value="hidden">Oculto</option>
-            </select>
-          </li>
+          <ProjectEditorCard
+            key={item.id}
+            item={item}
+            onSaved={handleSaved}
+            onDeleted={handleDeleted}
+          />
         ))}
       </ul>
 
       {filteredItems.length === 0 && (
         <p className="py-12 text-center text-sm text-muted-foreground">
-          Nenhum repositório encontrado.
+          Nenhum projeto encontrado.
         </p>
       )}
 

@@ -1,28 +1,49 @@
 import { projectOverrides } from "@/data/projects-overrides";
-import { getPortfolioOverridesFromKv } from "@/services/portfolio-kv";
-import type { PortfolioAdminEntry, PortfolioVisibility } from "@/types/portfolio-admin";
+import {
+  recordToProjectOverride,
+  visibilityFromRecord,
+} from "@/lib/portfolio-record";
+import { getPortfolioProjectsFromKv } from "@/services/portfolio-kv";
+import type {
+  PortfolioProjectRecord,
+  PortfolioVisibility,
+} from "@/types/portfolio-admin";
 import type { ProjectOverride } from "@/types/project";
 
+export async function getPortfolioRecords(): Promise<PortfolioProjectRecord[]> {
+  return getPortfolioProjectsFromKv();
+}
+
 export async function getEffectiveOverrides(): Promise<ProjectOverride[]> {
-  const kvEntries = await getPortfolioOverridesFromKv();
+  const kvRecords = await getPortfolioProjectsFromKv();
   const map = new Map<string, ProjectOverride>();
 
   for (const o of projectOverrides) {
     map.set(o.repoFullName, { ...o });
   }
 
-  for (const entry of kvEntries) {
-    const existing = map.get(entry.repoFullName) ?? {
-      repoFullName: entry.repoFullName,
-    };
-    map.set(entry.repoFullName, {
+  for (const record of kvRecords) {
+    const key =
+      record.source === "github"
+        ? record.repoFullName ?? record.id
+        : record.id;
+    const existing = map.get(key) ?? { repoFullName: key };
+    const fromRecord = recordToProjectOverride(record);
+    map.set(key, {
       ...existing,
-      ...entry,
-      repoFullName: entry.repoFullName,
+      ...fromRecord,
+      repoFullName: key,
     });
   }
 
   return Array.from(map.values());
+}
+
+export async function getRecordsMap(): Promise<
+  Map<string, PortfolioProjectRecord>
+> {
+  const records = await getPortfolioProjectsFromKv();
+  return new Map(records.map((r) => [r.id, r]));
 }
 
 export function visibilityFromOverride(
@@ -38,22 +59,4 @@ export function visibilityFromOverride(
   return days > 90 ? "finished" : "in_progress";
 }
 
-export function overrideFromVisibility(
-  repoFullName: string,
-  visibility: PortfolioVisibility,
-  existing?: ProjectOverride
-): PortfolioAdminEntry {
-  if (visibility === "hidden") {
-    return {
-      repoFullName,
-      hidden: true,
-      priority: existing?.priority,
-    };
-  }
-  return {
-    repoFullName,
-    hidden: false,
-    category: visibility,
-    priority: existing?.priority,
-  };
-}
+export { visibilityFromRecord };

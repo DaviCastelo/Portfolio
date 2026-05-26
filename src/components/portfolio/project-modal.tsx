@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { portfolioConfig } from "@/data/projects-overrides";
+import { ProjectMarkdown } from "@/components/portfolio/project-markdown";
 import type { MergedProject } from "@/types/project";
 
 interface ProjectModalProps {
@@ -39,20 +40,20 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
           <DialogTitle className="capitalize text-2xl">{project.title}</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          <div className="relative aspect-video overflow-hidden rounded-lg bg-muted/30">
+          <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-lg bg-muted/30 p-3 sm:p-4">
             <OptimizedImage
               key={thumbSrc}
               src={thumbSrc}
               alt={project.title}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 768px) 100vw, 600px"
               onError={() => {
                 if (thumbSrc !== fallbackThumb) setThumbSrc(fallbackThumb);
               }}
             />
           </div>
-          <p className="text-muted-foreground">{project.description}</p>
+          <ProjectMarkdown content={project.description} />
           {project.readmeExcerpt && (
             <p className="text-sm text-muted-foreground/80">{project.readmeExcerpt}…</p>
           )}
@@ -66,19 +67,22 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
           {project.architecture && (
             <div>
               <h4 className="mb-2 text-sm font-medium">Arquitetura</h4>
-              <p className="text-sm text-muted-foreground">{project.architecture}</p>
+              <ProjectMarkdown
+                content={project.architecture}
+                className="text-sm"
+              />
             </div>
           )}
           {project.challenges && (
             <div>
               <h4 className="mb-2 text-sm font-medium">Desafios</h4>
-              <p className="text-sm text-muted-foreground">{project.challenges}</p>
+              <ProjectMarkdown content={project.challenges} className="text-sm" />
             </div>
           )}
           {project.solutions && (
             <div>
               <h4 className="mb-2 text-sm font-medium">Soluções</h4>
-              <p className="text-sm text-muted-foreground">{project.solutions}</p>
+              <ProjectMarkdown content={project.solutions} className="text-sm" />
             </div>
           )}
           {project.screenshots.length > 0 && (
