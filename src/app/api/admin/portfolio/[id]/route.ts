@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { requireAdmin, revalidatePortfolio } from "@/lib/admin-api";
 import {
+  getOrCreateRecordForPatch,
+  mergePortfolioPatch,
+} from "@/lib/portfolio-patch-apply";
+import {
   applyVisibilityToRecord,
-  isManualId,
   parseProjectIdFromParam,
   sourceFromId,
 } from "@/lib/portfolio-record";
@@ -13,11 +16,7 @@ import {
   patchPortfolioProject,
   upsertPortfolioProject,
 } from "@/services/portfolio-kv";
-import type {
-  PortfolioProjectRecord,
-  PortfolioVisibility,
-} from "@/types/portfolio-admin";
-import type { ProjectCategory } from "@/types/project";
+import { portfolioPatchSchema } from "@/utils/admin-validators";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -40,65 +39,18 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   try {
     const id = parseProjectIdFromParam((await context.params).id);
-    const body = (await request.json()) as Partial<{
-      title: string;
-      professionalDescription: string;
-      thumbnail: string;
-      stack: string[];
-      demoUrl: string;
-      featured: boolean;
-      priority: number;
-      visibility: PortfolioVisibility;
-      category: ProjectCategory;
-      hidden: boolean;
-      architecture: string;
-      challenges: string;
-      solutions: string;
-      screenshots: string[];
-      githubUrl: string;
-    }>;
-
-    let record = await getPortfolioProjectById(id);
-
-    if (!record) {
-      if (isManualId(id)) {
-        return NextResponse.json(
-          { error: "Projeto manual não encontrado." },
-          { status: 404 }
-        );
-      }
-      record = {
-        id,
-        source: "github",
-        repoFullName: id,
-        githubUrl: `https://github.com/${id}`,
-      };
+    const parsed = portfolioPatchSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Dados inválidos.", details: parsed.error.flatten() },
+        { status: 400 }
+      );
     }
 
-    const patch: Partial<PortfolioProjectRecord> = {};
+    const resolved = await getOrCreateRecordForPatch(id);
+    if ("error" in resolved) return resolved.error;
 
-    if (body.title !== undefined) patch.title = body.title;
-    if (body.professionalDescription !== undefined)
-      patch.professionalDescription = body.professionalDescription;
-    if (body.thumbnail !== undefined) patch.thumbnail = body.thumbnail;
-    if (body.stack !== undefined) patch.stack = body.stack;
-    if (body.demoUrl !== undefined) patch.demoUrl = body.demoUrl;
-    if (body.featured !== undefined) patch.featured = body.featured;
-    if (body.priority !== undefined) patch.priority = body.priority;
-    if (body.architecture !== undefined) patch.architecture = body.architecture;
-    if (body.challenges !== undefined) patch.challenges = body.challenges;
-    if (body.solutions !== undefined) patch.solutions = body.solutions;
-    if (body.screenshots !== undefined) patch.screenshots = body.screenshots;
-    if (body.githubUrl !== undefined) patch.githubUrl = body.githubUrl;
-    if (body.category !== undefined) patch.category = body.category;
-    if (body.hidden !== undefined) patch.hidden = body.hidden;
-
-    let updated: PortfolioProjectRecord = { ...record, ...patch, id };
-
-    if (body.visibility !== undefined) {
-      updated = applyVisibilityToRecord(updated, body.visibility);
-    }
-
+    const updated = mergePortfolioPatch(resolved.record, parsed.data, id);
     const exists = Boolean(await getPortfolioProjectById(id));
     const saved = exists
       ? await patchPortfolioProject(id, updated)

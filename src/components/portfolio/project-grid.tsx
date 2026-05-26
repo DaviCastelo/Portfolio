@@ -2,8 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import dynamic from "next/dynamic";
 import { ProjectCard } from "./project-card";
-import { ProjectModal } from "./project-modal";
+
+const ProjectModal = dynamic(
+  () => import("./project-modal").then((m) => m.ProjectModal),
+  { ssr: false }
+);
 import { Button } from "@/components/ui/button";
 import { usePortfolioPageSize } from "@/hooks/use-portfolio-page-size";
 import type { MergedProject, ProjectCategory } from "@/types/project";

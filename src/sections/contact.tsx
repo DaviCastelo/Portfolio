@@ -12,7 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { SocialLinks } from "@/components/layout/social-links";
 import { contact } from "@/data/site";
+import { WHATSAPP_URL, externalLinkProps } from "@/lib/links";
 
 const MAX_MESSAGE = 5000;
 
@@ -92,6 +94,17 @@ export function ContactSection() {
               <Mail className="h-4 w-4" />
               {contact.email}
             </a>
+            <div className="mt-6 space-y-3">
+              <p className="text-sm font-medium">Siga a Kairos</p>
+              <SocialLinks />
+              <a
+                href={WHATSAPP_URL}
+                {...externalLinkProps}
+                className="inline-flex text-sm text-muted-foreground hover:text-primary"
+              >
+                WhatsApp
+              </a>
+            </div>
           </div>
           <form
             method="post"

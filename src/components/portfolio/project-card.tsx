@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { motion } from "framer-motion";
-import { ExternalLink, Github, Star } from "lucide-react";
+import { ExternalLink, GitBranch, Star } from "lucide-react";
+import { TechBadge } from "@/components/portfolio/tech-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { portfolioConfig } from "@/data/projects-overrides";
@@ -11,15 +12,19 @@ import { markdownToPlainPreview } from "@/components/portfolio/project-markdown"
 import type { MergedProject } from "@/types/project";
 import { useTilt } from "@/hooks/use-tilt";
 
-interface ProjectCardProps {
+type ProjectCardProps = Readonly<{
   project: MergedProject;
   onOpen: (project: MergedProject) => void;
-}
+}>;
 
 const categoryLabels = {
   finished: "Finalizado",
   in_progress: "Em andamento",
 };
+
+function stopCardActivation(event: MouseEvent) {
+  event.stopPropagation();
+}
 
 export function ProjectCard({ project, onOpen }: ProjectCardProps) {
   const { ref, onMove, onLeave } = useTilt(5);
@@ -32,22 +37,25 @@ export function ProjectCard({ project, onOpen }: ProjectCardProps) {
 
   return (
     <motion.article
+      ref={ref}
       layout
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       className="group cursor-pointer"
       onClick={() => onOpen(project)}
-      onKeyDown={(e) => e.key === "Enter" && onOpen(project)}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen(project);
+        }
+      }}
       role="button"
       tabIndex={0}
       aria-label={`Ver detalhes de ${project.title}`}
     >
-      <div
-        ref={ref}
-        onMouseMove={onMove}
-        onMouseLeave={onLeave}
-        className="glass glass-hover overflow-hidden rounded-xl transition-shadow hover:shadow-[0_0_40px_-12px_rgba(10,132,255,0.25)]"
-      >
+      <div className="glass glass-hover overflow-hidden rounded-xl transition-shadow hover:shadow-[0_0_40px_-12px_rgba(10,132,255,0.25)]">
         <div className="relative aspect-video overflow-hidden bg-muted/30 p-2">
           <OptimizedImage
             key={thumbSrc}
@@ -79,31 +87,40 @@ export function ProjectCard({ project, onOpen }: ProjectCardProps) {
           {techStack.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {techStack.map((tech) => (
-                <Badge
+                <TechBadge
                   key={tech}
+                  name={tech}
                   variant="outline"
-                  className="text-xs font-normal"
-                >
-                  {tech}
-                </Badge>
+                  className="text-xs"
+                />
               ))}
             </div>
           )}
           <p className="line-clamp-2 text-sm text-muted-foreground">
             {markdownToPlainPreview(project.description)}
           </p>
-          <div className="flex flex-wrap gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
+          <div className="flex flex-wrap gap-2 pt-1">
             {project.demoUrl && (
               <Button variant="outline" size="sm" asChild>
-                <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={project.demoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={stopCardActivation}
+                >
                   <ExternalLink className="h-3.5 w-3.5" />
                   Demo
                 </a>
               </Button>
             )}
             <Button variant="outline" size="sm" asChild>
-              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                <Github className="h-3.5 w-3.5" />
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={stopCardActivation}
+              >
+                <GitBranch className="h-3.5 w-3.5" />
                 GitHub
               </a>
             </Button>

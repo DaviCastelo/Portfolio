@@ -6,21 +6,21 @@ import {
   getPortfolioProjectById,
   upsertPortfolioProject,
 } from "@/services/portfolio-kv";
-import type { CreateManualProjectBody } from "@/types/portfolio-admin";
+import { manualProjectSchema } from "@/utils/admin-validators";
 
 export async function POST(request: Request) {
   const authError = await requireAdmin();
   if (authError) return authError;
 
   try {
-    const body = (await request.json()) as CreateManualProjectBody;
-
-    if (!body.slug?.trim() || !body.title?.trim()) {
+    const parsed = manualProjectSchema.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Slug e título são obrigatórios." },
+        { error: "Dados inválidos.", details: parsed.error.flatten() },
         { status: 400 }
       );
     }
+    const body = parsed.data;
 
     const id = manualProjectId(body.slug);
     const existing = await getPortfolioProjectById(id);

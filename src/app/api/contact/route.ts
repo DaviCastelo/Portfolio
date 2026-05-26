@@ -1,30 +1,16 @@
 import { NextResponse } from "next/server";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { getResendClient } from "@/services/resend";
 import { contactSchema } from "@/utils/validators";
 
-const rateLimit = new Map<string, { count: number; reset: number }>();
 const LIMIT = 5;
 const WINDOW_MS = 60 * 60 * 1000;
 
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimit.get(ip);
-  if (!entry || now > entry.reset) {
-    rateLimit.set(ip, { count: 1, reset: now + WINDOW_MS });
-    return true;
-  }
-  if (entry.count >= LIMIT) return false;
-  entry.count++;
-  return true;
-}
-
 export async function POST(request: Request) {
   try {
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = getClientIp(request);
 
-    if (!checkRateLimit(ip)) {
+    if (!checkRateLimit("contact", ip, LIMIT, WINDOW_MS)) {
       return NextResponse.json(
         { error: "Muitas tentativas. Tente novamente mais tarde." },
         { status: 429 }

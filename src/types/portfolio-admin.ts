@@ -39,6 +39,8 @@ export interface PortfolioProjectRecord {
   githubUrl?: string;
 
   lastSyncedAt?: string;
+  /** Última edição salva no admin */
+  editedAt?: string;
 }
 
 export interface PortfolioAdminRepoItem {

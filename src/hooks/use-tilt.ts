@@ -3,12 +3,12 @@
 import { useCallback, useRef } from "react";
 import { useReducedMotion } from "./use-reduced-motion";
 
-export function useTilt(intensity = 8) {
-  const ref = useRef<HTMLDivElement>(null);
+export function useTilt<T extends HTMLElement = HTMLDivElement>(intensity = 8) {
+  const ref = useRef<T>(null);
   const reduced = useReducedMotion();
 
   const onMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
+    (e: React.MouseEvent<T>) => {
       if (reduced || !ref.current) return;
       const rect = ref.current.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;

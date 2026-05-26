@@ -125,10 +125,11 @@ async function enrichRepo(
 ): Promise<MergedProject> {
   const [owner, name] = repo.full_name.split("/");
 
-  const useSnapshot =
-    record?.lastSyncedAt &&
-    record.languages &&
-    record.readmeExcerpt !== undefined;
+  const useSnapshot = Boolean(
+    record &&
+      (record.lastSyncedAt || record.languages) &&
+      Object.keys(record.languages ?? {}).length > 0
+  );
 
   let languages: Record<string, number>;
   let readmeExcerpt: string | undefined;

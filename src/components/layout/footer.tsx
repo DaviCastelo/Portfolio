@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { BrandIcon } from "@/components/brand/brand-icon";
+import { SocialLinks } from "@/components/layout/social-links";
 import { Separator } from "@/components/ui/separator";
 import { navLinks } from "@/data/site";
 import { SITE_TAGLINE } from "@/lib/constants";
@@ -18,6 +19,7 @@ export function Footer() {
           <div className="max-w-sm space-y-4">
             <BrandLogo />
             <p className="text-sm text-muted-foreground">{SITE_TAGLINE}</p>
+            <SocialLinks />
           </div>
           <nav className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {navLinks.map((link) => (
@@ -34,12 +36,14 @@ export function Footer() {
         <Separator className="my-8" />
         <div className="flex flex-col items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-row">
           <p>© {year} Kairos tecnologias. Todos os direitos reservados.</p>
-          <Link
-            href="/admin"
-            className="transition-colors hover:text-primary"
-          >
-            Painel Admin
-          </Link>
+          {process.env.NODE_ENV !== "production" && (
+            <Link
+              href="/admin"
+              className="transition-colors hover:text-primary"
+            >
+              Painel Admin
+            </Link>
+          )}
         </div>
       </div>
     </footer>

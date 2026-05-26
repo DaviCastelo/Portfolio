@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { TechStackPicker } from "@/components/admin/tech-stack-picker";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,14 +12,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { TechStackPicker } from "@/components/admin/tech-stack-picker";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { PortfolioAdminRepoItem } from "@/types/portfolio-admin";
 
-interface NewProjectDialogProps {
+type NewProjectDialogProps = Readonly<{
   onCreated: (item: PortfolioAdminRepoItem) => void;
-}
+}>;
 
 export function NewProjectDialog({ onCreated }: NewProjectDialogProps) {
   const [open, setOpen] = useState(false);
@@ -29,8 +29,7 @@ export function NewProjectDialog({ onCreated }: NewProjectDialogProps) {
   const [stack, setStack] = useState<string[]>([]);
   const [demoUrl, setDemoUrl] = useState("");
 
-  async function handleCreate(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleCreate() {
     setLoading(true);
     try {
       const res = await fetch("/api/admin/portfolio/manual", {
@@ -73,10 +72,22 @@ export function NewProjectDialog({ onCreated }: NewProjectDialogProps) {
         <DialogHeader>
           <DialogTitle>Novo projeto manual</DialogTitle>
         </DialogHeader>
-        <form onSubmit={(e) => void handleCreate(e)} className="space-y-4">
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleCreate();
+          }}
+        >
           <div>
-            <label className="mb-1 block text-xs font-medium">Slug (URL)</label>
+            <label
+              htmlFor="new-project-slug"
+              className="mb-1 block text-xs font-medium"
+            >
+              Slug (URL)
+            </label>
             <Input
+              id="new-project-slug"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               placeholder="meu-app-cliente"
@@ -84,23 +95,38 @@ export function NewProjectDialog({ onCreated }: NewProjectDialogProps) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium">Título</label>
+            <label
+              htmlFor="new-project-title"
+              className="mb-1 block text-xs font-medium"
+            >
+              Título
+            </label>
             <Input
+              id="new-project-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium">Descrição</label>
+            <label
+              htmlFor="new-project-description"
+              className="mb-1 block text-xs font-medium"
+            >
+              Descrição
+            </label>
             <Textarea
+              id="new-project-description"
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
           <div>
-            <label htmlFor="new-project-stack" className="mb-1 block text-xs font-medium">
+            <label
+              htmlFor="new-project-stack"
+              className="mb-1 block text-xs font-medium"
+            >
               Stack
             </label>
             <TechStackPicker
@@ -110,8 +136,14 @@ export function NewProjectDialog({ onCreated }: NewProjectDialogProps) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium">Demo URL</label>
+            <label
+              htmlFor="new-project-demo-url"
+              className="mb-1 block text-xs font-medium"
+            >
+              Demo URL
+            </label>
             <Input
+              id="new-project-demo-url"
               value={demoUrl}
               onChange={(e) => setDemoUrl(e.target.value)}
             />

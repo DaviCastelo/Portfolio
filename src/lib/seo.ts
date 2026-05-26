@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { faviconAsset } from "@/data/brand-assets";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
+import { INSTAGRAM_URL, TIKTOK_URL } from "@/lib/links";
 
 export function buildMetadata(): Metadata {
   const title = `${SITE_NAME} | Tecnologia que resolve`;
@@ -56,7 +57,7 @@ export function organizationJsonLd() {
     url: SITE_URL,
     logo: `${SITE_URL}/brand/LogoQuadradaPreta.png`,
     description: SITE_TAGLINE,
-    sameAs: [],
+    sameAs: [INSTAGRAM_URL, TIKTOK_URL],
   };
 }
 

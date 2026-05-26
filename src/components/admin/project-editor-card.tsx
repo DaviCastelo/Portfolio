@@ -25,6 +25,16 @@ function encodeId(id: string): string {
   return encodeURIComponent(id);
 }
 
+function safeFieldId(id: string): string {
+  return id.replace(/[^a-zA-Z0-9-_]/g, "-");
+}
+
+function visibilityLabel(visibility: PortfolioVisibility): string {
+  if (visibility === "hidden") return "Oculto";
+  if (visibility === "in_progress") return "Em andamento";
+  return "Finalizado";
+}
+
 export interface ProjectDraft {
   title: string;
   professionalDescription: string;
@@ -55,11 +65,11 @@ export function draftFromItem(item: PortfolioAdminRepoItem): ProjectDraft {
   };
 }
 
-interface ProjectEditorCardProps {
+type ProjectEditorCardProps = Readonly<{
   item: PortfolioAdminRepoItem;
   onSaved: (item: PortfolioAdminRepoItem) => void;
   onDeleted?: (id: string) => void;
-}
+}>;
 
 export function ProjectEditorCard({
   item,
@@ -76,6 +86,7 @@ export function ProjectEditorCard({
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isGithub = item.source === "github";
+  const fieldId = safeFieldId(item.id);
 
   async function handleUpload(file: File) {
     setUploading(true);
@@ -90,7 +101,18 @@ export function ProjectEditorCard({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Erro no upload.");
       setDraft((d) => ({ ...d, thumbnail: data.url }));
-      toast.success("Capa enviada.");
+
+      const saveRes = await fetch(`/api/admin/portfolio/${encodeId(item.id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ thumbnail: data.url }),
+      });
+      const saveData = await saveRes.json();
+      if (!saveRes.ok) {
+        throw new Error(saveData.error ?? "Capa enviada, mas falhou ao salvar.");
+      }
+      onSaved(saveData.item as PortfolioAdminRepoItem);
+      toast.success("Capa enviada e salva.");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro no upload.");
     } finally {
@@ -207,11 +229,7 @@ export function ProjectEditorCard({
           </p>
         </div>
         <span className="shrink-0 text-xs text-muted-foreground">
-          {draft.visibility === "hidden"
-            ? "Oculto"
-            : draft.visibility === "in_progress"
-              ? "Em andamento"
-              : "Finalizado"}
+          {visibilityLabel(draft.visibility)}
         </span>
         {expanded ? (
           <ChevronUp className="h-4 w-4 shrink-0" />
@@ -224,8 +242,14 @@ export function ProjectEditorCard({
         <div className="space-y-4 border-t border-border px-4 py-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-medium">Título</label>
+              <label
+                htmlFor={`${fieldId}-title`}
+                className="mb-1 block text-xs font-medium"
+              >
+                Título
+              </label>
               <Input
+                id={`${fieldId}-title`}
                 value={draft.title}
                 onChange={(e) =>
                   setDraft((d) => ({ ...d, title: e.target.value }))
@@ -233,10 +257,14 @@ export function ProjectEditorCard({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium">
+              <label
+                htmlFor={`${fieldId}-visibility`}
+                className="mb-1 block text-xs font-medium"
+              >
                 Visibilidade
               </label>
               <select
+                id={`${fieldId}-visibility`}
                 className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
                 value={draft.visibility}
                 onChange={(e) =>
@@ -254,7 +282,10 @@ export function ProjectEditorCard({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium">
+            <label
+              htmlFor={`${fieldId}-description`}
+              className="mb-1 block text-xs font-medium"
+            >
               Descrição comercial (Markdown)
             </label>
             <p className="mb-2 text-xs text-muted-foreground">
@@ -265,6 +296,7 @@ export function ProjectEditorCard({
               entre blocos são respeitadas.
             </p>
             <Textarea
+              id={`${fieldId}-description`}
               rows={8}
               value={draft.professionalDescription}
               onChange={(e) =>
@@ -278,13 +310,13 @@ export function ProjectEditorCard({
 
           <div>
             <label
-              htmlFor={`stack-${item.id}`}
+              htmlFor={`${fieldId}-stack`}
               className="mb-1 block text-xs font-medium"
             >
               Stack
             </label>
             <TechStackPicker
-              id={`stack-${item.id}`}
+              id={`${fieldId}-stack`}
               value={draft.stack}
               onChange={(stack) => setDraft((d) => ({ ...d, stack }))}
             />
@@ -292,8 +324,14 @@ export function ProjectEditorCard({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-medium">Demo URL</label>
+              <label
+                htmlFor={`${fieldId}-demo`}
+                className="mb-1 block text-xs font-medium"
+              >
+                Demo URL
+              </label>
               <Input
+                id={`${fieldId}-demo`}
                 value={draft.demoUrl}
                 onChange={(e) =>
                   setDraft((d) => ({ ...d, demoUrl: e.target.value }))
@@ -302,10 +340,14 @@ export function ProjectEditorCard({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium">
+              <label
+                htmlFor={`${fieldId}-thumbnail`}
+                className="mb-1 block text-xs font-medium"
+              >
                 URL da capa
               </label>
               <Input
+                id={`${fieldId}-thumbnail`}
                 value={draft.thumbnail}
                 onChange={(e) =>
                   setDraft((d) => ({ ...d, thumbnail: e.target.value }))
@@ -341,19 +383,24 @@ export function ProjectEditorCard({
               )}
               Enviar capa
             </Button>
-            <label className="flex items-center gap-2 text-sm">
+            <label
+              htmlFor={`${fieldId}-featured`}
+              className="flex cursor-pointer items-center gap-2 text-sm"
+            >
               <input
+                id={`${fieldId}-featured`}
                 type="checkbox"
                 checked={draft.featured}
                 onChange={(e) =>
                   setDraft((d) => ({ ...d, featured: e.target.checked }))
                 }
               />
-              Destaque
+              <span>Destaque</span>
             </label>
             <div className="flex items-center gap-2 text-sm">
-              <span>Prioridade</span>
+              <label htmlFor={`${fieldId}-priority`}>Prioridade</label>
               <Input
+                id={`${fieldId}-priority`}
                 type="number"
                 className="h-8 w-20"
                 value={draft.priority}
@@ -373,21 +420,29 @@ export function ProjectEditorCard({
                 Sincronizar com GitHub (estrelas, linguagens, README)
               </p>
               <div className="mb-2 flex flex-wrap gap-4 text-sm">
-                <label className="flex items-center gap-2">
+                <label
+                  htmlFor={`${fieldId}-restore-desc`}
+                  className="flex cursor-pointer items-center gap-2"
+                >
                   <input
+                    id={`${fieldId}-restore-desc`}
                     type="checkbox"
                     checked={restoreDescription}
                     onChange={(e) => setRestoreDescription(e.target.checked)}
                   />
-                  Restaurar descrição do GitHub
+                  <span>Restaurar descrição do GitHub</span>
                 </label>
-                <label className="flex items-center gap-2">
+                <label
+                  htmlFor={`${fieldId}-restore-stack`}
+                  className="flex cursor-pointer items-center gap-2"
+                >
                   <input
+                    id={`${fieldId}-restore-stack`}
                     type="checkbox"
                     checked={restoreStack}
                     onChange={(e) => setRestoreStack(e.target.checked)}
                   />
-                  Restaurar stack das linguagens
+                  <span>Restaurar stack das linguagens</span>
                 </label>
               </div>
               <Button

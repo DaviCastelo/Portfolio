@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { BrandLogo } from "@/components/brand/brand-logo";
+import { SocialLinks } from "@/components/layout/social-links";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { navLinks } from "@/data/site";
@@ -45,6 +46,7 @@ export function Header() {
               Falar conosco
             </a>
           </Button>
+          <SocialLinks variant="icon" />
         </div>
         <div className="flex items-center gap-1 md:hidden">
           <ThemeToggle />
@@ -64,6 +66,7 @@ export function Header() {
         )}
       >
         <nav className="flex flex-col gap-4 px-4 py-6">
+          <SocialLinks size="sm" />
           {navLinks.map((link) => (
             <Link
               key={link.href}

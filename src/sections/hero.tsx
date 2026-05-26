@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTheme } from "next-themes";
 import gsap from "gsap";
 import { BrandIcon } from "@/components/brand/brand-icon";
 import { BrandLogo } from "@/components/brand/brand-logo";
@@ -13,7 +14,10 @@ import { SITE_NAME } from "@/lib/constants";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 export function HeroSection() {
+  const { resolvedTheme } = useTheme();
   const reduced = useReducedMotion();
+  const orbVariant =
+    resolvedTheme === "light" ? "iconCircleLight" : "iconCircleDark";
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const orbRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +70,7 @@ export function HeroSection() {
         ref={orbRef}
         className="pointer-events-none absolute right-[10%] top-[20%] hidden opacity-20 blur-sm lg:block"
       >
-        <BrandIcon variant="iconCircleDark" size="xl" animate="none" />
+        <BrandIcon variant={orbVariant} size="xl" animate="none" />
       </div>
       <div className="relative mx-auto grid max-w-6xl gap-12 px-4 py-20 md:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 lg:py-28">
         <div className="space-y-8">

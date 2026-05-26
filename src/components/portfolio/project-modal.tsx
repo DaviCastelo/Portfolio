@@ -3,25 +3,25 @@
 import { useEffect, useState } from "react";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import Link from "next/link";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, GitBranch } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+import { TechBadge } from "@/components/portfolio/tech-badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { portfolioConfig } from "@/data/projects-overrides";
 import { ProjectMarkdown } from "@/components/portfolio/project-markdown";
 import type { MergedProject } from "@/types/project";
 
-interface ProjectModalProps {
+type ProjectModalProps = Readonly<{
   project: MergedProject | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
+}>;
 
 export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps) {
   const [thumbSrc, setThumbSrc] = useState(project?.thumbnail ?? "");
@@ -35,11 +35,14 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto sm:max-w-2xl"
+        aria-describedby="project-modal-description"
+      >
         <DialogHeader>
           <DialogTitle className="capitalize text-2xl">{project.title}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-6">
+        <div id="project-modal-description" className="space-y-6">
           <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-lg bg-muted/30 p-3 sm:p-4">
             <OptimizedImage
               key={thumbSrc}
@@ -59,9 +62,7 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
           )}
           <div className="flex flex-wrap gap-2">
             {project.stack.map((tech) => (
-              <Badge key={tech} variant="secondary">
-                {tech}
-              </Badge>
+              <TechBadge key={tech} name={tech} />
             ))}
           </div>
           {project.architecture && (
@@ -87,11 +88,11 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
           )}
           {project.screenshots.length > 0 && (
             <div className="grid gap-2 sm:grid-cols-2">
-              {project.screenshots.map((src, i) => (
-                <div key={i} className="relative aspect-video rounded-lg overflow-hidden">
+              {project.screenshots.map((src, index) => (
+                <div key={src} className="relative aspect-video rounded-lg overflow-hidden">
                   <OptimizedImage
                     src={src}
-                    alt={`Screenshot ${i + 1} de ${project.title}`}
+                    alt={`Screenshot ${index + 1} de ${project.title}`}
                     fill
                     className="object-cover"
                     sizes="300px"
@@ -112,7 +113,7 @@ export function ProjectModal({ project, open, onOpenChange }: ProjectModalProps)
             )}
             <Button variant="outline" asChild>
               <Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                <Github className="h-4 w-4" />
+                <GitBranch className="h-4 w-4" />
                 GitHub
               </Link>
             </Button>

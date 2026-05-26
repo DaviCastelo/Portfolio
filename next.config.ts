@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import path from "path";
+import path from "node:path";
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "*.public.blob.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.simpleicons.org",
       },
     ],
   },
